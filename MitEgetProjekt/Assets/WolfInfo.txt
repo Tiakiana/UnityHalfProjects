@@ -1,0 +1,28 @@
+Library class:
+BLWolf
+
+Trees:
+	Wolf_Attack
+	Wolf_Idle
+	Unknown
+
+Contexts:
+	Unknown
+
+Branch priority groups:
+	Unknown
+
+Actions (7: 1 - 8):
+	Flee (1)
+	TooWounded (2)
+	EnemyNear (3)
+	Attack (4)
+	Hungry (5)
+	Hunt (6)
+	LieDown (7)
+	Unknown (8)
+
+Decorators (0: 9 - 9):
+	Unknown (9)
+
+Agent classes:
