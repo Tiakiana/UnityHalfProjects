@@ -10,7 +10,17 @@ public class Shoot : NetworkBehaviour {
 	void Start () {
 	
 	}
-	
+    [Command]
+    void CmdFire() {
+        Rigidbody instantiatedProjectile = Instantiate(projectile, muzzle.transform.position, transform.rotation) as Rigidbody;
+        instantiatedProjectile.GetComponent<Bullet>().PlayerShot = gameObject;
+        NetworkServer.Spawn(instantiatedProjectile.gameObject);
+
+        instantiatedProjectile.velocity = transform.TransformDirection(new Vector3(0, 0, speed));
+        Destroy(instantiatedProjectile.gameObject, 3);
+
+
+    }
 	void Update () {
         if (!isLocalPlayer)
         {
@@ -19,11 +29,7 @@ public class Shoot : NetworkBehaviour {
 
         if (Input.GetMouseButton(0))
         {
-            Rigidbody instantiatedProjectile = Instantiate(projectile, muzzle.transform.position, transform.rotation) as Rigidbody;
-            instantiatedProjectile.GetComponent<Bullet>().PlayerShot = gameObject;
-            
-            instantiatedProjectile.velocity = transform.TransformDirection(new Vector3(0, 0, speed));
-            Destroy(instantiatedProjectile.gameObject, 3);
+            CmdFire();
         }
     }
 }

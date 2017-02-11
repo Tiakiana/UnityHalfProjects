@@ -10,21 +10,13 @@ public class Teleport : NetworkBehaviour {
     public float time = 0.5f;
 	// Use this for initialization
 	void Start () {
-        if (GetComponent<NetworkIdentity>() != null)
-        {
-            Debug.Log("Der er en");
-        }
-        else
-        {
-            Debug.Log("Der er ikke en");
-
-        }
+      
 
     }
 
     // Update is called once per frame
     void Update () {
-        Debug.Log("Is local:"+ isLocalPlayer);
+       // Debug.Log("Is local:"+ isLocalPlayer);
 
         if (!isLocalPlayer)
             return;
@@ -39,25 +31,13 @@ public class Teleport : NetworkBehaviour {
             if (Physics.Raycast(Camera.transform.position, Camera.transform.forward, out hit, Range))
             {
 
-                GetComponent<LineRenderer>().SetPosition(0, transform.position);
+                GetComponent<LineRenderer>().SetPosition(0, transform.position +new Vector3(0,2,0));
                 GetComponent<LineRenderer>().SetPosition(1, hit.point);
                 StartMarker = transform.position;
                 Target = hit.point;
 
             }
 
-
-
-            
-
-         //   Debug.Log("Fyrst igår");
-           // transform.parent.position = Target;
-
-           
-
-          
-            
-            //transform.parent.transform.eulerAngles = vec;
 
         }
         if (Input.GetMouseButtonUp(1))
@@ -66,7 +46,7 @@ public class Teleport : NetworkBehaviour {
             GameObject go = new GameObject();
             go.transform.rotation = transform.transform.rotation;
             go.transform.position = Target;
-            go.transform.position -= go.transform.forward;
+            go.transform.position -= go.transform.forward *6;
             FloatTarget = go;
             Destroy(go, 5);
             StartCoroutine("Floating");

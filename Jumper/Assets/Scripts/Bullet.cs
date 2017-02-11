@@ -13,8 +13,8 @@ public class Bullet : NetworkBehaviour {
         {
               
 
-            Debug.Log("Jakob");
-            col.gameObject.SendMessage("TakeDamage",10);
+     //       Debug.Log("Jakob");
+            col.gameObject.SendMessage("TakeDamage",1);
         }
     }
 	void Update () {
