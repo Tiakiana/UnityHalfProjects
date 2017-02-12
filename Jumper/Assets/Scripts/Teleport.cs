@@ -22,7 +22,10 @@ public class Teleport : NetworkBehaviour {
             return;
 
         RaycastHit hit;
-
+        if (Input.GetMouseButtonDown(1))
+        {
+            GetComponent<AudioSource>().Play();
+        }
       
 
         if (Input.GetMouseButton(1))
@@ -30,7 +33,7 @@ public class Teleport : NetworkBehaviour {
 
             if (Physics.Raycast(Camera.transform.position, Camera.transform.forward, out hit, Range))
             {
-
+                
                 GetComponent<LineRenderer>().SetPosition(0, transform.position +new Vector3(0,2,0));
                 GetComponent<LineRenderer>().SetPosition(1, hit.point);
                 StartMarker = transform.position;
