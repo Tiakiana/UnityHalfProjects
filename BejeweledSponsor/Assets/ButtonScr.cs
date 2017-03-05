@@ -36,6 +36,8 @@ public class ButtonScr : MonoBehaviour {
         if (Inventory)
         {
             GameManager.GmInst.Held = this;
+            Cursor.SetCursor(GameManager.GmInst.Sprites[this.Item-1].texture, Vector2.zero, CursorMode.Auto);
+        ;
             Debug.Log("This is now held " + this.Item);
         }
         else

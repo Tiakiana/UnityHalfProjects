@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour {
     public GameObject ButtonPrefab;
     public GameObject ColumnPrefab,ButtonInventory;
     public Sprite[] Sprites = new Sprite[6];
+    public Texture2D[] Textures = new Texture2D[6];
     public static GameManager GmInst;
     public ButtonScr Held;
     public ButtonScr Clicked;
@@ -358,7 +359,8 @@ public class GameManager : MonoBehaviour {
                 }
                 Moves = Level;
                 Held = null;
-                
+                Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+
             }
             else
             {
@@ -371,6 +373,7 @@ public class GameManager : MonoBehaviour {
                     }
                 }
                 Held = null;
+                Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
                 Moves = Level;
             }
         }
