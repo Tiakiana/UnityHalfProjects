@@ -7,14 +7,17 @@ public class BoidScr : MonoBehaviour
 {
 
     public GameObject Neighbour;
+    public Vector3 AvgDirection;
+    public Vector3 AvgPosition;
     public float Alignment, Cohesion, Separation, Perception,PersonalSpace;
     public float Volatility = 100;
+  
 
 
-	void Start ()
+    void Start ()
 	{
 	    StartCoroutine("Move");
-        StartCoroutine("SetDirection");
+        StartCoroutine("SetDirection2");
 	    //  StartCoroutine("Eyes");
 	}
 
@@ -39,18 +42,7 @@ public class BoidScr : MonoBehaviour
         }
     }
 
-    IEnumerator Eyes()
-    {
-        while (true)
-        {
-            
-        Collider[]  cols = Physics.OverlapSphere(transform.position, 6);
-            
-            
-            yield return new WaitForSeconds(0.01f);
-
-        }
-    }
+  
 
 
     IEnumerator SetDirection()
@@ -70,6 +62,23 @@ public class BoidScr : MonoBehaviour
         }
     }
 
+    IEnumerator SetDirection2()
+    {
+        while (true)
+        {
+            EyesOn2();
+
+           
+                //Vector3 vec = Quaternion.Euler(transform.rotation);
+
+                transform.eulerAngles += CalcCost2() / Volatility * AvgDirection;
+
+            
+            yield return new WaitForSeconds(0.01f);
+        }
+    }
+
+
     public void EyesOn()
     {
         Neighbour = null;
@@ -83,7 +92,7 @@ public class BoidScr : MonoBehaviour
         {
             if (col.gameObject.transform.root != transform.root)
             {
-                float distcur = Vector2.Distance(transform.position, col.gameObject.transform.position);
+                float distcur = Vector3.Distance(transform.position, col.gameObject.transform.position);
                 if (distcur< distance)
                 {
                     distance = distcur;
@@ -96,6 +105,40 @@ public class BoidScr : MonoBehaviour
         {
             Neighbour = Nearest.gameObject;
         }
+
+    }
+
+    public void EyesOn2()
+    {
+        AvgDirection = new Vector3(0,0,0);
+
+        Collider[] cols = Physics.OverlapSphere(transform.position, Perception);
+
+        if (cols.Length>0)
+        {
+            foreach (Collider col in cols)
+            {
+                AvgDirection += col.transform.up;
+            }
+        }
+
+        AvgDirection/= cols.Length;
+
+        AvgPosition = new Vector3(0, 0, 0);
+
+        
+        if (cols.Length > 0)
+        {
+            foreach (Collider col in cols)
+            {
+                AvgPosition += col.transform.position;
+            }
+        }
+
+        AvgPosition /= cols.Length;
+
+
+
 
     }
 
@@ -115,11 +158,23 @@ public class BoidScr : MonoBehaviour
         }
         return res;
     }
+    public float CalcCost2()
+    {
+        float res = 0;
+        if (Neighbour != null)
+        {
+
+            res = CalcCohesionAndSeparation(AvgPosition) + CalcAlignment(AvgDirection);
+
+        }
+        return res;
+    }
+
 
     public float CalcCohesionAndSeparation(GameObject neig)
     {
         float res = 100;
-        float N = Vector2.Distance(transform.position, neig.transform.position);
+        float N = Vector3.Distance(transform.position, neig.transform.position);
         if (N-PersonalSpace>0)
         {
             res= 100/(N - PersonalSpace) * Cohesion;
@@ -132,6 +187,23 @@ public class BoidScr : MonoBehaviour
         return res;
     }
 
+    public float CalcCohesionAndSeparation(Vector3 neig)
+    {
+        float res = 100;
+        float N = Vector3.Distance(transform.position, neig);
+        if (N - PersonalSpace > 0)
+        {
+            res = 100 / (N - PersonalSpace) * Cohesion;
+        }
+
+        if (N - PersonalSpace < 0)
+        {
+            res = 100 / (N - PersonalSpace) * Separation;
+        }
+        return res;
+    }
+
+
     public float CalcAlignment(GameObject neig)
     {
         float res = 0;
@@ -142,6 +214,22 @@ public class BoidScr : MonoBehaviour
 
         res /= 100;
         
+
+
+        return res * Alignment;
+    }
+
+
+    public float CalcAlignment(Vector3 neig)
+    {
+        float res = 0;
+
+        Vector3 vect = transform.up - neig;
+
+        res = Mathf.Abs(vect.x) + Mathf.Abs(vect.y) + Mathf.Abs(vect.z);
+
+        res /= 100;
+
 
 
         return res * Alignment;
