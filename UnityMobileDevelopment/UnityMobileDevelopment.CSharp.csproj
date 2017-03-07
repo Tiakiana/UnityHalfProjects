@@ -61,18 +61,12 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="SharpConnect">
-      <HintPath>Assets\Plugins\SharpConnect.dll</HintPath>
+    <Reference Include="Mono.Cecil">
+      <HintPath>Library\UnityAssemblies\Mono.Cecil.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Connectingy.cs" />
-    <Compile Include="Assets\Scripts\Threading\BtnScript.cs" />
-    <Compile Include="Assets\Scripts\Threading\Job.cs" />
-    <Compile Include="Assets\Scripts\Threading\LinkSyncSCR.cs" />
-    <Compile Include="Assets\Scripts\Threading\ThreadedJob.cs" />
-    <Compile Include="Assets\Scripts\Threading\UseJob.cs" />
-    <Compile Include="Assets\TestyTheTested.cs" />
+    <Compile Include="Assets\NetworkedMovement.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
