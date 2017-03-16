@@ -24,14 +24,14 @@ public class Pawn : MonoBehaviour
 
     void Start()
     {
-        if (Player1Owned)
-        {
+        //if (Player1Owned)
+       // {
             
         
-        transform.position = new Vector3(2, 0, -1);
-        StartCoroutine("SkraldetingDerskalVæk");
-        Colour = Square.SquareColour.Red;
-        }
+      //  transform.position = new Vector3(2, 0, -1);
+       // StartCoroutine("SkraldetingDerskalVæk");
+        //Colour = Square.SquareColour.Red;
+        //}
     }
 
     public void Move(Directionale dir)
