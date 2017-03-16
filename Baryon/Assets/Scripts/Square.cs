@@ -20,4 +20,15 @@ public class Square : MonoBehaviour {
     {
         GetComponent<SpriteRenderer>().sprite = Board.BoardInst.SqSprites[(int)SQColour];
     }
+
+    void OnMouseDown()
+    {
+        GameManager.GmInst.SquarePointedTo = gameObject;
+    }
+
+    void OnMouseUp()
+    {
+        GameManager.GmInst.SquarePointedTo = null;
+
+    }
 }
