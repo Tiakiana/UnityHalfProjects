@@ -7,6 +7,8 @@ public class Pawn : MonoBehaviour
     public Vector2 Coordinates;
     public bool Player1Owned;
     public Square.SquareColour Colour;
+    public bool OnBoard;
+    Vector3 home;
 
     public enum Directionale
     {
@@ -24,6 +26,8 @@ public class Pawn : MonoBehaviour
 
     void Start()
     {
+        home = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+
         //if (Player1Owned)
        // {
             
@@ -176,7 +180,7 @@ public class Pawn : MonoBehaviour
     }
 
     void Update()
-    {
+    {/*
         if (Player1Owned)
         {
 
@@ -198,9 +202,17 @@ public class Pawn : MonoBehaviour
                 Move(Directionale.Right);
             }
         }
+
+        */
     }
 
-    public void MoveLeft()
+    public void BeatHome() {
+        MoveTo(home);
+        OnBoard = false;
+    }
+    public void MoveTo(Vector3 vec)
     {
+        transform.position = vec;
+
     }
 }
