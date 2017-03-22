@@ -9,6 +9,9 @@ public class Pawn : MonoBehaviour
     public Square.SquareColour Colour;
     public bool OnBoard;
     Vector3 home;
+    public bool OptionMoveLeft, OptionMoveUp, OptionMoveRight, OptionMoveDown, OptionMoveIn;
+    //Left, Up, right, down, in
+    public bool[] Options = new bool[5];
 
     public enum Directionale
     {
@@ -38,8 +41,63 @@ public class Pawn : MonoBehaviour
         //}
     }
 
+    public void CheckForOptions()
+    {
+        OptionMoveUp = false;
+        OptionMoveDown = false;
+        OptionMoveIn = false;
+        OptionMoveLeft = false;
+        OptionMoveRight = false;
+        for (int i = 0; i < 5; i++)
+        {
+            Options[i] = false;
+        }
+        if (OnBoard)
+        {
+            if (CheckValidMove(Directionale.Up))
+            {
+                OptionMoveUp = true;
+                Options[1] = true;
+
+            }
+            if (CheckValidMove(Directionale.Down))
+            {
+                OptionMoveDown = true;
+                Options[3] = true;
+
+            }
+            if (CheckValidMove(Directionale.Right))
+            {
+                OptionMoveRight = true;
+                Options[2] = true;
+
+            }
+            if (CheckValidMove(Directionale.Left))
+            {
+                OptionMoveLeft = true;
+                Options[0] = true;
+
+            }
+        }
+        else
+        {
+            OptionMoveIn = true;
+            Options[4] = true;
+        }
+    }
+
+    public void CheckForKill()
+    {
+
+    }
+
     public void Move(Directionale dir)
     {
+        if (!OnBoard)
+        {
+            Debug.Log("Not on board");
+            return;
+        }
         switch (dir)
         {
             case Directionale.Up:
@@ -50,7 +108,6 @@ public class Pawn : MonoBehaviour
 
                     transform.position += Vector3.up;
                     Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = gameObject;
-
                 }
 
 
@@ -112,9 +169,10 @@ public class Pawn : MonoBehaviour
 
     }
 
-    public void OnMouseDown()
+    public void OnMouseUp()
     {
-
+        GameManager.GmInst.ShowMovePanel(gameObject);
+        
     }
 
     
@@ -208,6 +266,7 @@ public class Pawn : MonoBehaviour
 
     public void BeatHome() {
         MoveTo(home);
+
         OnBoard = false;
     }
     public void MoveTo(Vector3 vec)

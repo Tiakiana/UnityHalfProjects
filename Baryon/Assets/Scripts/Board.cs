@@ -128,8 +128,10 @@ public class Board : MonoBehaviour
             {
                 if (Squares[x,y].Occupant != null && Squares[x,y].SQColour == colour &&  Squares[x,y].Occupant.GetComponent<Pawn>().Player1Owned != isPlayer1)
                 {
-                    Destroy(Squares[x,y].Occupant);
-                    // Give points to player
+                    Squares[x,y].Occupant.GetComponent<Pawn>().BeatHome();
+                    Squares[x, y].Occupant =null;
+
+                    GameManager.GmInst.GetPointAndMove(isPlayer1);
                 }
             }
         }
