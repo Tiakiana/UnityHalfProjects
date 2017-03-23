@@ -15,7 +15,7 @@ public class Pawn : MonoBehaviour
 
     public enum Directionale
     {
-        Up, Right, Down, Left
+        Up = 0, Right = 1, Down = 2, Left =3
 
     }
 
@@ -102,6 +102,23 @@ public class Pawn : MonoBehaviour
         }
         switch (dir)
         {
+            case Directionale.Left:
+
+                if (CheckValidMove(dir))
+                {
+                    lastPos = transform.position;
+
+                    Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = null;
+
+                    transform.position += Vector3.left;
+
+                    Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = gameObject;
+
+                }
+
+
+                break;
+
             case Directionale.Up:
 
                 if (CheckValidMove(dir))
@@ -151,22 +168,7 @@ public class Pawn : MonoBehaviour
 
                 break;
 
-            case Directionale.Left:
-
-                if (CheckValidMove(dir))
-                {
-                    lastPos = transform.position;
-
-                    Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = null;
-
-                    transform.position += Vector3.left;
-
-                    Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = gameObject;
-
-                }
-
-
-                break;
+          
 
             default:
                 throw new ArgumentOutOfRangeException("dir", dir, null);

@@ -19,15 +19,15 @@ public class GameManager : MonoBehaviour
      bool EndOfGame = false;
 
     [Header("References")]
-
-    public Text Player1ScoreText, Player2ScoreText;
+    public HeuristicAIPlayer Hubert;
+    public Text Player1ScoreText, Player2ScoreText, PlayerTurnText;
     public GameObject MovePanel;
     public GameObject[] Player1Pawns = new GameObject[3];
     public GameObject[] Player2Pawns = new GameObject[3];
 
     [HideInInspector]
     public bool TurnDone;
-    [HideInInspector]
+    
     public bool player1sTurn = true;
     bool player1Won = false;
     bool player2Won = false;
@@ -212,12 +212,16 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator TakeTurn()
     {
-        Debug.Log("Starting a turn");
+    //    Debug.Log("Starting a turn");
         Moves = 1;
         while (!TurnDone)
         {
+            Hubert.TakeTurn();
+            PlayerTurnText.text = "Moves " + Moves;
+
             if (Moves <=0)
             {
+              
                 TurnDone = true;
                 break;
                 
@@ -235,10 +239,13 @@ public class GameManager : MonoBehaviour
         if (player1sTurn)
         {
             player1sTurn = false;
+            PlayerTurnText.text = "White Player is moving";
         }
         else
         {
             player1sTurn = true;
+            PlayerTurnText.text = "Black Player is moving";
+
         }
 
     }
