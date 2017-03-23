@@ -132,6 +132,7 @@ public class Board : MonoBehaviour
                     Squares[x, y].Occupant =null;
 
                     GameManager.GmInst.GetPointAndMove(isPlayer1);
+                //    GameManager.GmInst.Moves--;
                 }
             }
         }
@@ -148,5 +149,17 @@ public class Board : MonoBehaviour
         return this;
     }
 
+
+    public void CleanUpBoard()
+    {
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < 5; y++)
+            {
+
+                Squares[x, y].Occupant = null;
+            }
+        }
+    }
 
 }

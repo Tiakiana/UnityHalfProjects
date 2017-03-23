@@ -23,12 +23,12 @@ public class Square : MonoBehaviour {
 
     void OnMouseDown()
     {
-        GameManager.GmInst.SquarePointedTo = gameObject;
+      //  GameManager.GmInst.SquarePointedTo = gameObject;
     }
 
     void OnMouseUp()
     {
-        GameManager.GmInst.SquarePointedTo = null;
+     //   GameManager.GmInst.SquarePointedTo = null;
 
     }
 }

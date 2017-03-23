@@ -8,7 +8,7 @@ public class Pawn : MonoBehaviour
     public bool Player1Owned;
     public Square.SquareColour Colour;
     public bool OnBoard;
-    Vector3 home;
+    Vector3 home, lastPos;
     public bool OptionMoveLeft, OptionMoveUp, OptionMoveRight, OptionMoveDown, OptionMoveIn;
     //Left, Up, right, down, in
     public bool[] Options = new bool[5];
@@ -19,26 +19,14 @@ public class Pawn : MonoBehaviour
 
     }
 
-    IEnumerator SkraldetingDerskalVæk()
-    {
-        yield return new WaitForSeconds(0.3f);
-        Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = gameObject;
-
-    }
 
 
     void Start()
     {
         home = new Vector3(transform.position.x, transform.position.y, transform.position.z);
 
-        //if (Player1Owned)
-       // {
-            
-        
-      //  transform.position = new Vector3(2, 0, -1);
-       // StartCoroutine("SkraldetingDerskalVæk");
-        //Colour = Square.SquareColour.Red;
-        //}
+     
+
     }
 
     public void CheckForOptions()
@@ -81,15 +69,29 @@ public class Pawn : MonoBehaviour
         }
         else
         {
-            OptionMoveIn = true;
-            Options[4] = true;
+            if (Player1Owned)
+            {
+                if (Board.BoardInst.Squares[2, 0].Occupant == null || Board.BoardInst.Squares[2,0].Occupant.GetComponent<Pawn>().Player1Owned == false)
+                {
+                    OptionMoveIn = true;
+                    Options[4] = true;
+                }
+
+
+            }
+            else
+            {
+                if (Board.BoardInst.Squares[2, 4].Occupant == null || Board.BoardInst.Squares[2, 4].Occupant.GetComponent<Pawn>().Player1Owned)
+                {
+                    OptionMoveIn = true;
+                    Options[4] = true;
+                }
+
+            }
         }
     }
 
-    public void CheckForKill()
-    {
-
-    }
+ 
 
     public void Move(Directionale dir)
     {
@@ -104,6 +106,7 @@ public class Pawn : MonoBehaviour
 
                 if (CheckValidMove(dir))
                 {
+                    lastPos = transform.position;
                     Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = null;
 
                     transform.position += Vector3.up;
@@ -116,6 +119,8 @@ public class Pawn : MonoBehaviour
             case Directionale.Right:
                 if (CheckValidMove(dir))
                 {
+                    lastPos = transform.position;
+
                     Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = null;
 
                     transform.position += Vector3.right;
@@ -132,6 +137,8 @@ public class Pawn : MonoBehaviour
 
                 if (CheckValidMove(dir))
                 {
+                    lastPos = transform.position;
+
                     Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = null;
 
                     transform.position += Vector3.down;
@@ -148,6 +155,8 @@ public class Pawn : MonoBehaviour
 
                 if (CheckValidMove(dir))
                 {
+                    lastPos = transform.position;
+
                     Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = null;
 
                     transform.position += Vector3.left;
@@ -165,14 +174,24 @@ public class Pawn : MonoBehaviour
         if (Board.BoardInst.Squares[(int)transform.position.x,(int)transform.position.y].SQColour == Colour)
         {
             Board.BoardInst.KillColour(Player1Owned, Colour);
+
         }
+        if (GameManager.GmInst.GameMasterMode)
+        {
+            ResetLastPosition();
+        }
+        GameManager.GmInst.Moves--;
 
     }
 
     public void OnMouseUp()
     {
+        if (Player1Owned == GameManager.GmInst.player1sTurn)
+        {
         GameManager.GmInst.ShowMovePanel(gameObject);
-        
+
+        }
+
     }
 
     
@@ -188,7 +207,12 @@ public class Pawn : MonoBehaviour
                 {
                     if (Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y + 1].Occupant == null)
                     {
+                        Vector3 vec = transform.position + Vector3.up;
+                        if (vec!= lastPos)
+                        {
                         CanIMove = true;
+
+                        }
                     }
 
                 }
@@ -200,7 +224,12 @@ public class Pawn : MonoBehaviour
                 {
                     if (Board.BoardInst.Squares[(int)transform.position.x + 1, (int)transform.position.y].Occupant == null)
                     {
-                        CanIMove = true;
+                        Vector3 vec = transform.position + Vector3.right;
+                        if (vec != lastPos)
+                        {
+                            CanIMove = true;
+
+                        }
                     }
 
                 }
@@ -211,7 +240,12 @@ public class Pawn : MonoBehaviour
                 {
                     if (Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y - 1].Occupant == null)
                     {
-                        CanIMove = true;
+                        Vector3 vec = transform.position + Vector3.down;
+                        if (vec != lastPos)
+                        {
+                            CanIMove = true;
+
+                        }
                     }
 
                 }
@@ -221,7 +255,12 @@ public class Pawn : MonoBehaviour
                 {
                     if (Board.BoardInst.Squares[(int)transform.position.x - 1, (int)transform.position.y].Occupant == null)
                     {
-                        CanIMove = true;
+                        Vector3 vec = transform.position + Vector3.left;
+                        if (vec != lastPos)
+                        {
+                            CanIMove = true;
+
+                        }
                     }
 
                 }
@@ -237,36 +276,19 @@ public class Pawn : MonoBehaviour
 
     }
 
+    public void ResetLastPosition()
+    {
+        lastPos = new Vector3(9,9,9);
+    }
+
     void Update()
-    {/*
-        if (Player1Owned)
-        {
-
-
-            if (Input.GetKeyDown("w"))
-            {
-                Move(Directionale.Up);
-            }
-            if (Input.GetKeyDown("s"))
-            {
-                Move(Directionale.Down);
-            }
-            if (Input.GetKeyDown("a"))
-            {
-                Move(Directionale.Left);
-            }
-            if (Input.GetKeyDown("d"))
-            {
-                Move(Directionale.Right);
-            }
-        }
-
-        */
+    {
+       
     }
 
     public void BeatHome() {
         MoveTo(home);
-
+        ResetLastPosition();
         OnBoard = false;
     }
     public void MoveTo(Vector3 vec)

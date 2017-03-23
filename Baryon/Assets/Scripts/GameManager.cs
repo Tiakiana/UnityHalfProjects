@@ -1,22 +1,39 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEditorInternal;
 
 public class GameManager : MonoBehaviour
 {
+    private Camera c;
+    private MovePanelScr movePanelScr;
+    private int Player1Points, Player2Points;
 
+    [Header("PlayModes")]
+    public bool TwoPlayerMode = false;
+    public bool ZeroPlayerMode = false;
+    public bool OnePlayerMode = false;
+    public bool GameMasterMode = false;
     public static GameManager GmInst;
-    public int Player1Points, Player2Points;
 
+     bool EndOfGame = false;
+
+    [Header("References")]
 
     public Text Player1ScoreText, Player2ScoreText;
     public GameObject MovePanel;
-    private MovePanelScr movePanelScr;
-    public GameObject SquarePointedTo;
     public GameObject[] Player1Pawns = new GameObject[3];
     public GameObject[] Player2Pawns = new GameObject[3];
-     Camera c;
-    private bool isShowingMovePanel = false;
+
+    [HideInInspector]
+    public bool TurnDone;
+    [HideInInspector]
+    public bool player1sTurn = true;
+    bool player1Won = false;
+    bool player2Won = false;
+    [Header("Moves")]
+    public int Moves = 0;
+
 
 
     void Awake()
@@ -31,10 +48,10 @@ public class GameManager : MonoBehaviour
 
     void Update() {
 
-        if (Input.GetKeyUp("w"))
+        if (Input.GetKeyUp("s"))
         {
-            
-            PutPawnOnBoard(Player1Pawns[1].GetComponent<Pawn>());
+             StartCoroutine("PlayGame");
+
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -51,41 +68,19 @@ public class GameManager : MonoBehaviour
         MovePanel.transform.position = c.WorldToScreenPoint(go.transform.position);
 
         MovePanel.SetActive(true);
-        isShowingMovePanel = true;
+    //    isShowingMovePanel = true;
         movePanelScr.pawn = go.GetComponent<Pawn>();
 
 
     }
 
-    public void GetPointAndMove(bool player1)
-    {
-        if (player1)
-        {
-            Player1Points++;
-            Player1ScoreText.text = "Player 1: " + Player1Points;
-            //Move +1
-
-        }
-        else
-        {
-            Player2Points++;
-            Player2ScoreText.text = "Player 2: " + Player2Points;
-
-            //Move +1;
-        }
-    }
-
+    
     public void HideMovePanel()
     {
         MovePanel.SetActive(false);
-        isShowingMovePanel = false;
+      // isShowingMovePanel = false;
     }
-
-    public void MovePiece()
-    {
-
-    }
-
+    
     public void PutPawnOnBoard(Pawn pawn) {
         if (!pawn.OnBoard)
         {
@@ -97,6 +92,7 @@ public class GameManager : MonoBehaviour
                     pawn.MoveTo(new Vector3(2, 0, -2));
                     Board.BoardInst.Squares[2, 0].Occupant = pawn.gameObject;
                     pawn.OnBoard = true;
+                    Moves--;
                 }
                 else
                 {
@@ -111,6 +107,7 @@ public class GameManager : MonoBehaviour
                         pawn.MoveTo(new Vector3(2, 0, -2));
                         Board.BoardInst.Squares[2, 0].Occupant = pawn.gameObject;
                         pawn.OnBoard = true;
+                        Moves--;
                     }
                     else
                     {
@@ -127,6 +124,7 @@ public class GameManager : MonoBehaviour
                     pawn.MoveTo(new Vector3(2, 4, -2));
                     Board.BoardInst.Squares[2, 4].Occupant = pawn.gameObject;
                     pawn.OnBoard = true;
+                    Moves--;
                 }
                 else
                 {
@@ -141,6 +139,7 @@ public class GameManager : MonoBehaviour
                         pawn.MoveTo(new Vector3(2, 4, -2));
                         Board.BoardInst.Squares[2, 4].Occupant = pawn.gameObject;
                         pawn.OnBoard = true;
+                        Moves--;
                     }
                     else
                     {
@@ -153,5 +152,136 @@ public class GameManager : MonoBehaviour
         } 
 
     }
+    public void GetPointAndMove(bool player1)
+    {
+        if (player1)
+        {
+            Player1Points++;
+            Player1ScoreText.text = "Player 1: " + Player1Points;
+            Moves++;
+
+        }
+        else
+        {
+            Player2Points++;
+            Player2ScoreText.text = "Player 2: " + Player2Points;
+            Moves++;
+        }
+
+        if (Player1Points >= 5)
+        {
+            // Player eins hat gewonnen!
+            EndOfGame = true;
+
+        }
+        if (Player2Points >= 5)
+        {
+            // Player Zwei hat gewonnen!
+            EndOfGame = true;
+        }
+    }
+
+    void CleanUp()
+    {
+        player1sTurn = true;
+        player1Won = false;
+        player2Won = false;
+        //clean up
+
+        //nulstille brættet
+        Board.BoardInst.CleanUpBoard();
+
+        // nulstille brikker
+
+        foreach (GameObject item in Player1Pawns)
+        {
+            item.GetComponent<Pawn>().BeatHome();
+        }
+        foreach (GameObject item in Player2Pawns)
+        {
+            item.GetComponent<Pawn>().BeatHome();
+        }
+        //nulstille points
+        Player1Points = 0;
+        Player2Points = 0;
+        Player1ScoreText.text = "Player 1: ";
+        Player2ScoreText.text = "Player 2: ";
+
+
+    }
+
+    public IEnumerator TakeTurn()
+    {
+        Debug.Log("Starting a turn");
+        Moves = 1;
+        while (!TurnDone)
+        {
+            if (Moves <=0)
+            {
+                TurnDone = true;
+                break;
+                
+            }
+            yield return null;
+        }
+        foreach (GameObject item in Player1Pawns)
+        {
+            item.GetComponent<Pawn>().ResetLastPosition();
+        }
+        foreach (GameObject item in Player2Pawns)
+        {
+            item.GetComponent<Pawn>().ResetLastPosition();
+        }
+        if (player1sTurn)
+        {
+            player1sTurn = false;
+        }
+        else
+        {
+            player1sTurn = true;
+        }
+
+    }
+
+    public IEnumerator PlayGame()
+    {
+        Debug.Log("Starting game");
+        CleanUp();
+
+        // Take the turn
+
+        while (!player1Won && !player2Won)
+        {
+            int moves = 1;
+            ExtraMove:
+
+
+            //Checks constantly for win
+            if (Player1Points>4)
+            {
+                player1Won = true;
+                TurnDone = true;
+                Debug.Log("And the grueling battle ended with the victory of Player 1");
+
+            }
+            else if (Player2Points > 4)
+            {
+                player2Won = true;
+                TurnDone = true;
+                Debug.Log("And the grueling battle ended with the victory of Player 2");
+            }
+           else if (TurnDone)
+            {
+                TurnDone = false;
+                StartCoroutine("TakeTurn");
+
+            }
+
+            yield return null;
+        }
+        StartCoroutine("PlayGame");
+
+    }
+
 
 }
