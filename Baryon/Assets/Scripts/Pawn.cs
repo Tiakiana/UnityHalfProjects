@@ -116,7 +116,6 @@ public class Pawn : MonoBehaviour
 
                 }
 
-
                 break;
 
             case Directionale.Up:
@@ -129,8 +128,7 @@ public class Pawn : MonoBehaviour
                     transform.position += Vector3.up;
                     Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = gameObject;
                 }
-
-
+                
                 break;
 
             case Directionale.Right:
@@ -145,9 +143,7 @@ public class Pawn : MonoBehaviour
                     Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = gameObject;
 
                 }
-
-
-
+                
                 break;
 
             case Directionale.Down:
@@ -163,9 +159,7 @@ public class Pawn : MonoBehaviour
                     Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y].Occupant = gameObject;
 
                 }
-
-
-
+                
                 break;
 
           

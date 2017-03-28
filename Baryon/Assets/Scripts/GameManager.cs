@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using UnityEditorInternal;
+//using UnityEditorInternal;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
      bool EndOfGame = false;
 
     [Header("References")]
-    public HeuristicAIPlayer Hubert;
+    public RandomAI Hubert;
     public Text Player1ScoreText, Player2ScoreText, PlayerTurnText;
     public GameObject MovePanel;
     public GameObject[] Player1Pawns = new GameObject[3];
@@ -44,7 +44,21 @@ public class GameManager : MonoBehaviour
     void Start () {
         c = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         movePanelScr = MovePanel.GetComponent<MovePanelScr>();
+        if (PlayerPrefs.GetInt("OnePlayerGame") == 1)
+        {
+            OnePlayerMode = true;
+        }
+        StartCoroutine("WaitForLoad");
+
     }
+
+    IEnumerator WaitForLoad()
+    {
+        yield return new WaitForSeconds(1);
+        StartCoroutine("PlayGame");
+
+    }
+
 
     void Update() {
 
@@ -68,7 +82,7 @@ public class GameManager : MonoBehaviour
         MovePanel.transform.position = c.WorldToScreenPoint(go.transform.position);
 
         MovePanel.SetActive(true);
-    //    isShowingMovePanel = true;
+  
         movePanelScr.pawn = go.GetComponent<Pawn>();
 
 
@@ -216,8 +230,12 @@ public class GameManager : MonoBehaviour
         Moves = 1;
         while (!TurnDone)
         {
+            if (OnePlayerMode)
+            {
             Hubert.TakeTurn();
-            PlayerTurnText.text = "Moves " + Moves;
+
+            }
+            //  PlayerTurnText.text = "Moves " + Moves;
 
             if (Moves <=0)
             {
