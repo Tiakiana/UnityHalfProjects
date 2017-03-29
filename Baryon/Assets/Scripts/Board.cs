@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Board : MonoBehaviour
 {
+
+
     public static Board BoardInst;
     public Square[,] Squares = new Square[5,5];
     public GameObject Green, Red, Blue;
@@ -136,6 +138,76 @@ public class Board : MonoBehaviour
                 }
             }
         }
+    }
+    public bool IsNextToColour(Square.SquareColour colour, int x, int y) {
+        try
+        {
+            if (Squares[x+1,y].SQColour == colour)
+            {
+                return true;
+            }
+        }
+        catch (System.Exception)
+        {
+
+            
+        }
+
+        try
+        {
+            if (Squares[x - 1, y].SQColour == colour)
+            {
+                return true;
+            }
+        }
+        catch (System.Exception)
+        {
+
+
+        }
+        try
+        {
+            if (Squares[x, y+1].SQColour == colour)
+            {
+                return true;
+            }
+        }
+        catch (System.Exception)
+        {
+
+
+        }
+        try
+        {
+            if (Squares[x, y-1].SQColour == colour)
+            {
+                return true;
+            }
+        }
+        catch (System.Exception)
+        {
+
+
+        }
+        return false;
+
+    }
+
+    public int HowManyWillIKill(bool isPlayer1, Square.SquareColour colour)
+    {
+        int res = 0;
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < 5; y++)
+            {
+                if (Squares[x,y].Occupant != null && Squares[x,y].SQColour == colour &&  Squares[x,y].Occupant.GetComponent<Pawn>().Player1Owned != isPlayer1)
+                {
+                    res++;
+                //    GameManager.GmInst.Moves--;
+                }
+            }
+        }
+        return res;
     }
 
     public Board GetBoardState()

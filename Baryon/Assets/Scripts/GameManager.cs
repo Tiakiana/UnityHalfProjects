@@ -14,12 +14,16 @@ public class GameManager : MonoBehaviour
     public bool ZeroPlayerMode = false;
     public bool OnePlayerMode = false;
     public bool GameMasterMode = false;
+    public int AIPlayerLevel = 1;
+
     public static GameManager GmInst;
 
      bool EndOfGame = false;
 
     [Header("References")]
-    public RandomAI Hubert;
+    public RandomAI Randy;
+    public HeuristicAIPlayer Hubert;
+
     public Text Player1ScoreText, Player2ScoreText, PlayerTurnText;
     public GameObject MovePanel;
     public GameObject[] Player1Pawns = new GameObject[3];
@@ -48,6 +52,7 @@ public class GameManager : MonoBehaviour
         {
             OnePlayerMode = true;
         }
+        AIPlayerLevel = PlayerPrefs.GetInt("AILevel");
         StartCoroutine("WaitForLoad");
 
     }
@@ -232,7 +237,16 @@ public class GameManager : MonoBehaviour
         {
             if (OnePlayerMode)
             {
-            Hubert.TakeTurn();
+                //Her skriver man hvilken Bot man gerne vil spille mod. Skal refactor
+                if (AIPlayerLevel ==1)
+                {
+                    Randy.TakeTurn();
+
+                }
+                if (AIPlayerLevel ==2)
+                {
+                    Hubert.TakeTurn();
+                }
 
             }
             //  PlayerTurnText.text = "Moves " + Moves;

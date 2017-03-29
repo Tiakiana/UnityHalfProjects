@@ -15,7 +15,7 @@ public class Pawn : MonoBehaviour
 
     public enum Directionale
     {
-        Up = 0, Right = 1, Down = 2, Left =3
+        Up = 0, Right = 1, Down = 2, Left =3, In = 4
 
     }
 
@@ -27,6 +27,71 @@ public class Pawn : MonoBehaviour
 
      
 
+    }
+
+    public static Directionale ConvertIntToDir(int dir) {
+        Directionale res = Directionale.In;
+        switch (dir)
+        {
+            
+            case 0:
+                res = Directionale.Left;
+                break;
+            case 1:
+                res = Directionale.Up;
+                break;
+            case 2:
+                res = Directionale.Right;
+                break;
+            case 3:
+                res = Directionale.Down;
+                break;
+            case 4:
+                res = Directionale.In;
+                break;
+            default:
+                res = Directionale.In;
+                break;
+        }
+        return res;
+    }
+
+    public static Square GetSquareInDirection(Pawn pawn, Directionale dir) {
+        Square res = null;
+        if (CheckValidMove(pawn,dir))
+        {
+            switch (dir)
+            {
+                case Directionale.Up:
+                    res = Board.BoardInst.Squares[(int)pawn.transform.position.x, (int)pawn.transform.position.y+1];
+                    break;
+                case Directionale.Right:
+                    res = Board.BoardInst.Squares[(int)pawn.transform.position.x+1, (int)pawn.transform.position.y];
+                    break;
+                case Directionale.Down:
+                    res = Board.BoardInst.Squares[(int)pawn.transform.position.x, (int)pawn.transform.position.y - 1];
+
+                    break;
+                case Directionale.Left:
+                    res = Board.BoardInst.Squares[(int)pawn.transform.position.x-1, (int)pawn.transform.position.y];
+                    break;
+
+                case Directionale.In:
+                    if (pawn.Player1Owned)
+                    {
+                        res = Board.BoardInst.Squares[2, 0];
+                    }
+                    else
+                    {
+                        res = Board.BoardInst.Squares[2, 4];
+                    }
+                    break;
+                default:
+                    Debug.Log("Pawn could not find a square");
+                    break;
+            }
+        }
+        return res;
     }
 
     public void CheckForOptions()
@@ -271,6 +336,120 @@ public class Pawn : MonoBehaviour
 
 
     }
+
+    public static bool CheckValidMove(Pawn pawn, Directionale dir)
+    {
+        bool CanIMove = false;
+        switch (dir)
+        {
+            case Directionale.Up:
+
+                if (pawn.transform.position.y < 4)
+                {
+                    if (Board.BoardInst.Squares[(int)pawn.transform.position.x, (int)pawn.transform.position.y + 1].Occupant == null)
+                    {
+                        Vector3 vec = pawn.transform.position + Vector3.up;
+                        if (vec != pawn.lastPos)
+                        {
+                            CanIMove = true;
+
+                        }
+                    }
+
+                }
+
+
+                break;
+            case Directionale.Right:
+                if (pawn.transform.position.x < 4)
+                {
+                    if (Board.BoardInst.Squares[(int)pawn.transform.position.x + 1, (int)pawn.transform.position.y].Occupant == null)
+                    {
+                        Vector3 vec = pawn.transform.position + Vector3.right;
+                        if (vec != pawn.lastPos)
+                        {
+                            CanIMove = true;
+
+                        }
+                    }
+
+                }
+
+                break;
+            case Directionale.Down:
+                if (pawn.transform.position.y > 0)
+                {
+                    if (Board.BoardInst.Squares[(int)pawn.transform.position.x, (int)pawn.transform.position.y - 1].Occupant == null)
+                    {
+                        Vector3 vec = pawn.transform.position + Vector3.down;
+                        if (vec != pawn.lastPos)
+                        {
+                            CanIMove = true;
+
+                        }
+                    }
+
+                }
+                break;
+            case Directionale.Left:
+                if (pawn.transform.position.x > 0)
+                {
+                    if (Board.BoardInst.Squares[(int)pawn.transform.position.x - 1, (int)pawn.transform.position.y].Occupant == null)
+                    {
+                        Vector3 vec = pawn.transform.position + Vector3.left;
+                        if (vec != pawn.lastPos)
+                        {
+                            CanIMove = true;
+
+                        }
+                    }
+
+                }
+                
+
+                break;
+            case Directionale.In:
+                if (pawn.Player1Owned)
+                {
+                    if (Board.BoardInst.Squares[2, 0].Occupant == null)
+                    {
+                        CanIMove = true;
+                    }
+                    else
+                    {
+                        if (!Board.BoardInst.Squares[2,0].Occupant.GetComponent<Pawn>().Player1Owned)
+                        {
+                            CanIMove = true;
+                        }
+                    }
+
+                }
+                else
+                {
+                    if (Board.BoardInst.Squares[2, 4].Occupant == null)
+                    {
+                        CanIMove = true;
+                    }
+                    else
+                    {
+                        if (Board.BoardInst.Squares[2, 4].Occupant.GetComponent<Pawn>().Player1Owned)
+                        {
+                            CanIMove = true;
+                        }
+                    }
+                }
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException("dir", dir, null);
+
+
+        }
+        return CanIMove;
+
+
+    }
+
 
     public void ResetLastPosition()
     {

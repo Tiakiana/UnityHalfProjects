@@ -24,6 +24,14 @@ public class MenuScr : MonoBehaviour {
         PlayerPrefs.SetInt("OnePlayerGame",1);
         SceneManager.LoadScene(1);
     }
+    public void SetAIPlay(int AILevel)
+    {
+        PlayerPrefs.SetInt("OnePlayerGame", 1);
+        PlayerPrefs.SetInt("AILevel", AILevel);
+        SceneManager.LoadScene(1);
+        
+    }
+
     public void Set2PlayerGame()
     {
         PlayerPrefs.SetInt("OnePlayerGame", 0);
