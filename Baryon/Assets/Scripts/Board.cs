@@ -10,7 +10,7 @@ public class Board : MonoBehaviour
     public static Board BoardInst;
     public Square[,] Squares = new Square[5, 5];
     public GameObject Green, Red, Blue;
-    LastMove[,] LastMoves = new LastMove[2, 3];
+    LastMove[,] LastMoves = new LastMove[3, 5];
 
     public Sprite[] SqSprites = new Sprite[5];
 
@@ -525,9 +525,9 @@ public class Board : MonoBehaviour
 
    
     public void ClearLastMoves() {
-        for (int player = 0; player < 2; player++)
+        for (int player = 0; player < 3; player++)
         {
-            for (int pawn = 0; pawn < 3; pawn++)
+            for (int pawn = 0; pawn < 5; pawn++)
             {
                 LastMoves[player, pawn] = new LastMove();
 

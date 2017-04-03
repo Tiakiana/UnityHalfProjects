@@ -6,6 +6,13 @@ public class MiniMax : MonoBehaviour
 {
     public int PlayerNumber = 2;
     public int MaxDepth;
+
+    public Pawn[] AIPawns = new Pawn[3];
+    public int[] PawnBestMove = new int[3];
+    public bool IsPlayer1 = true;
+    [SerializeField]
+    private GameManager gm;
+
     int BestMove = 9;
     int BestPawn = 9;
     float BestScore;
@@ -13,6 +20,75 @@ public class MiniMax : MonoBehaviour
     int BestMoveOther = 9;
     int BestPawnOther = 9;
     float BestScoreOther;
+    void Start()
+    {
+        StartCoroutine("waitforeverathing");
+    }
+    public void TakeTurn()
+    {
+
+        if (gm.player1sTurn == IsPlayer1)
+        {
+
+
+            MINIMAX();
+            MovePawn(BestPawn,BestMove);
+
+
+        }
+    }
+
+    public IEnumerator waitforeverathing()
+    {
+        yield return new WaitForSeconds(0.5f);
+        //    gm = GameManager.GmInst;
+
+        if (IsPlayer1)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                AIPawns[i] = gm.Player1Pawns[i].GetComponent<Pawn>();
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                AIPawns[i] = gm.Player2Pawns[i].GetComponent<Pawn>();
+            }
+        }
+    }
+
+
+
+
+    public void MovePawn(int pawn, int direction)
+    {
+
+        switch (direction)
+        {
+            case 0:
+                AIPawns[pawn].Move(Pawn.Directionale.Left);
+                break;
+            case 1:
+                AIPawns[pawn].Move(Pawn.Directionale.Up);
+                break;
+            case 2:
+                AIPawns[pawn].Move(Pawn.Directionale.Right);
+                break;
+            case 3:
+                AIPawns[pawn].Move(Pawn.Directionale.Down);
+                break;
+            case 4:
+                gm.PutPawnOnBoard(AIPawns[pawn]);
+                break;
+
+            default:
+                Debug.Log("No Valid move from Heuristic Player AI");
+                break;
+        }
+
+    }
 
     //Starter ballet
     //og returnerer det alderbedste move for spilleren
@@ -30,7 +106,7 @@ public class MiniMax : MonoBehaviour
                 float score = MIN(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn, posibMoves[move]), 0);
                 if (score > BestScore)
                 {
-                    BestMove = move;
+                    BestMove = posibMoves[move];
                     BestPawn = pawn;
                     BestScore = score;
                 }
@@ -74,9 +150,9 @@ public class MiniMax : MonoBehaviour
                 float score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[move]), depth);
                 if (score > BestScore)
                 {
-                    BestMove = move;
-                    BestPawn = pawn;
-                    BestScore = score;
+                    BestMoveOther = posibMoves[move];
+                    BestPawnOther = pawn;
+                    BestScoreOther = score;
                     moveBestScore = score;
                 }
 
@@ -92,8 +168,9 @@ public class MiniMax : MonoBehaviour
     {
         //if gameover return eval + ending
         //else if maxdepth return eval
-
-        
+        int bestMove;
+        int bestPawn;
+        float bestScore;
         //for each other players legal move
         int otherPlayerNumber;
         if (PlayerNumber == 1)
@@ -121,9 +198,9 @@ public class MiniMax : MonoBehaviour
                 float score = MAX(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn, posibMoves[move]), depth + 1);
                 if (score < BestScore)
                 {
-                    BestMoveOther = move;
-                    BestPawnOther = pawn;
-                    BestScoreOther = score;
+                    bestMove= posibMoves[move];
+                    bestPawn= pawn;
+                    bestScore= score;
                     moveBestScore = score;
                 }
             }

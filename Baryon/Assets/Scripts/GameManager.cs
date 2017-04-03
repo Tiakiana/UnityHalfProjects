@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     [Header("References")]
     public RandomAI Randy;
     public HeuristicAIPlayer Hubert;
+    public MiniMax Minnie;
 
     public Text Player1ScoreText, Player2ScoreText, PlayerTurnText;
     public GameObject MovePanel;
@@ -70,6 +71,11 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyUp("s"))
         {
              StartCoroutine("PlayGame");
+
+        }
+        if (Input.GetKeyUp("3"))
+        {
+          PlayerPrefs.SetInt("AILevel",3);
 
         }
 
@@ -246,6 +252,10 @@ public class GameManager : MonoBehaviour
                 if (AIPlayerLevel ==2)
                 {
                     Hubert.TakeTurn();
+                }
+                if (AIPlayerLevel == 3)
+                {
+                    Minnie.TakeTurn();
                 }
 
             }
