@@ -156,7 +156,70 @@ public class Pawn : MonoBehaviour
         }
     }
 
- 
+    public bool[] CheckForOptions(Square[,] boardState)
+    {
+        OptionMoveUp = false;
+        OptionMoveDown = false;
+        OptionMoveIn = false;
+        OptionMoveLeft = false;
+        OptionMoveRight = false;
+        bool[] options = new bool[5];
+
+        for (int i = 0; i < 5; i++)
+        {
+            options[i] = false;
+        }
+        if (OnBoard)
+        {
+            if (CheckValidMove(Directionale.Up))
+            {
+                OptionMoveUp = true;
+                options[1] = true;
+
+            }
+            if (CheckValidMove(Directionale.Down))
+            {
+                OptionMoveDown = true;
+                options[3] = true;
+
+            }
+            if (CheckValidMove(Directionale.Right))
+            {
+                OptionMoveRight = true;
+                options[2] = true;
+
+            }
+            if (CheckValidMove(Directionale.Left))
+            {
+                OptionMoveLeft = true;
+                options[0] = true;
+
+            }
+        }
+        else
+        {
+            if (Player1Owned)
+            {
+                if (Board.BoardInst.Squares[2, 0].Occupant == null || Board.BoardInst.Squares[2, 0].Occupant.GetComponent<Pawn>().Player1Owned == false)
+                {
+                    OptionMoveIn = true;
+                    options[4] = true;
+                }
+
+
+            }
+            else
+            {
+                if (Board.BoardInst.Squares[2, 4].Occupant == null || Board.BoardInst.Squares[2, 4].Occupant.GetComponent<Pawn>().Player1Owned)
+                {
+                    OptionMoveIn = true;
+                    options[4] = true;
+                }
+
+            }
+        }
+        return options;
+    }
 
     public void Move(Directionale dir)
     {
@@ -257,6 +320,80 @@ public class Pawn : MonoBehaviour
 
     
 
+    public bool CheckValidMove(Square[,] boardState, Pawn pawn, Directionale dir)
+    {
+        bool CanIMove = false;
+        switch (dir)
+        {
+            case Directionale.Up:
+
+                if (transform.position.y < 4)
+                {
+                    if (boardState[(int)pawn.transform.position.x, (int)pawn.transform.position.y + 1].Occupant == null)
+                    {
+                        Vector3 vec = pawn.transform.position + Vector3.up;
+                        if (vec!= lastPos)
+                        {
+                        CanIMove = true;
+                        }
+                    }
+                }
+                break;
+
+            case Directionale.Right:
+                if (transform.position.x < 4)
+                {
+                    if (boardState[(int)transform.position.x + 1, (int)transform.position.y].Occupant == null)
+                    {
+                        Vector3 vec = transform.position + Vector3.right;
+                        if (vec != lastPos)
+                        {
+                            CanIMove = true;
+                        }
+                    }
+                }
+                break;
+
+            case Directionale.Down:
+                if (transform.position.y > 0)
+                {
+                    if (Board.BoardInst.Squares[(int)transform.position.x, (int)transform.position.y - 1].Occupant == null)
+                    {
+                        Vector3 vec = transform.position + Vector3.down;
+                        if (vec != lastPos)
+                        {
+                            CanIMove = true;
+
+                        }
+                    }
+
+                }
+                break;
+            case Directionale.Left:
+                if (transform.position.x > 0)
+                {
+                    if (Board.BoardInst.Squares[(int)transform.position.x - 1, (int)transform.position.y].Occupant == null)
+                    {
+                        Vector3 vec = transform.position + Vector3.left;
+                        if (vec != lastPos)
+                        {
+                            CanIMove = true;
+
+                        }
+                    }
+
+                }
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException("dir", dir, null);
+
+
+        }
+        return CanIMove;
+
+
+    }
     public bool CheckValidMove(Directionale dir)
     {
         bool CanIMove = false;
