@@ -82,9 +82,10 @@ public class Board : MonoBehaviour
 
     public void CreatePieces()
     {
+        GameObject go3 = Instantiate(Blue, new Vector3(2, -1, 2), Quaternion.identity) as GameObject;
         GameObject go1 = Instantiate(Red, new Vector3(0, -1, 2), Quaternion.identity) as GameObject;
         GameObject go2 = Instantiate(Green, new Vector3(1, -1, 2), Quaternion.identity) as GameObject;
-        GameObject go3 = Instantiate(Blue, new Vector3(2, -1, 2), Quaternion.identity) as GameObject;
+        
         go1.GetComponent<Pawn>().Player1Owned = true;
         go1.name = "Player1Red";
         go1.GetComponent<Pawn>().Colour = Square.SquareColour.Red;
@@ -98,10 +99,10 @@ public class Board : MonoBehaviour
         go3.name = "Player1Blue";
         go3.GetComponent<Pawn>().Colour = Square.SquareColour.Blue;
 
+        GameObject go6 = Instantiate(Blue, new Vector3(4, 5, 2), Quaternion.identity) as GameObject;
 
         GameObject go4 = Instantiate(Red, new Vector3(2, 5, 2), Quaternion.identity) as GameObject;
         GameObject go5 = Instantiate(Green, new Vector3(3, 5, 2), Quaternion.identity) as GameObject;
-        GameObject go6 = Instantiate(Blue, new Vector3(4, 5, 2), Quaternion.identity) as GameObject;
 
 
         go4.GetComponent<Pawn>().Player1Owned = false;
@@ -117,13 +118,13 @@ public class Board : MonoBehaviour
         go6.GetComponent<Pawn>().Colour = Square.SquareColour.Blue;
 
 
-        GameManager.GmInst.Player1Pawns[0] = go1;
-        GameManager.GmInst.Player1Pawns[1] = go2;
-        GameManager.GmInst.Player1Pawns[2] = go3;
-        GameManager.GmInst.Player2Pawns[0] = go4;
-        GameManager.GmInst.Player2Pawns[1] = go5;
-        GameManager.GmInst.Player2Pawns[2] = go6;
+        GameManager.GmInst.Player1Pawns[0] = go3;
+        GameManager.GmInst.Player1Pawns[1] = go1;
+        GameManager.GmInst.Player1Pawns[2] = go2;
 
+        GameManager.GmInst.Player2Pawns[0] = go6;
+        GameManager.GmInst.Player2Pawns[1] = go4;
+        GameManager.GmInst.Player2Pawns[2] = go5;
 
     }
 
@@ -375,6 +376,8 @@ public class Board : MonoBehaviour
                         {
                             pawnPosX = x;
                             pawnPosY = y;
+
+                            //Debug.Log("I speculate that the " + pawn + " pawn of player " +player+ " is here: x: " + x + " y: " + y);
                             break;
                         }
                     }
@@ -541,46 +544,63 @@ public class Board : MonoBehaviour
     {
 
         int[,,] boardState = oldBoardState;
-
+        //find pawn
+        for (int x = 0; x < 5; x++)
+        {
+            string s = "| ";
+            for (int y = 4; y >= 0; y--)
+            {
+                s += " " + oldBoardState[x, y, 2];
+            }
+            //Debug.Log(s);
+        }
+     
         for (int x = 0; x < 5; x++)
         {
             for (int y = 0; y < 5; y++)
             {
                 if (boardState[x, y, 1] == player && boardState[x, y, 2] == pawn)
                 {
-                    LastMoves[player, pawn].XLast = x;
-                    LastMoves[player, pawn].YLast = y;
+                   // LastMoves[player, pawn].XLast = x;
+                   // LastMoves[player, pawn].YLast = y;
                     // Slet dens tidligere position
                     boardState[x, y, 1] = 0;
                     boardState[x, y, 2] = 0;
-
+                    //Debug.Log("Player"+player+","+x+","+y);
                     switch (move)
                     {
                         case 0:
-                            boardState[x - 1, y, 1] = player;
-                            boardState[x - 1, y, 2] = pawn;
-                            Kill(ref boardState, x - 1, y);
+                            if (x > 0)
+                            {
+                                boardState[x - 1, y, 1] = player;
+                                boardState[x - 1, y, 2] = pawn;
+                                Kill(ref boardState, x - 1, y);
+                            }
                             return boardState;
 
                         case 1:
-                            boardState[x, y + 1, 1] = player;
-                            boardState[x, y + 1, 2] = pawn;
-                            Kill(ref boardState, x, y + 1);
-
+                            if (y<4) {
+                                boardState[x, y + 1, 1] = player;
+                                boardState[x, y + 1, 2] = pawn;
+                                Kill(ref boardState, x, y + 1);
+                            }
                             return boardState;
 
                         case 2:
-                            boardState[x + 1, y, 1] = player;
-                            boardState[x + 1, y, 2] = pawn;
-                            Kill(ref boardState, x + 1, y);
-
+                            if (x<4) {
+                                boardState[x + 1, y, 1] = player;
+                                boardState[x + 1, y, 2] = pawn;
+                                Kill(ref boardState, x + 1, y);
+                            }
                             return boardState;
 
                         case 3:
-                            boardState[x, y - 1, 1] = player;
-                            boardState[x, y - 1, 2] = pawn;
-                            Kill(ref boardState, x, y - 1);
-
+                            if(y > 0)
+                            {
+                                boardState[x, y - 1, 1] = player;
+                                boardState[x, y - 1, 2] = pawn;
+                                Kill(ref boardState, x, y - 1);
+                            }
                             return boardState;
 
                     }
@@ -611,6 +631,19 @@ public class Board : MonoBehaviour
         return boardState;
     }
 
+    public void SeeThePawnsOfShadow(int[,,] boardState) {
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < 5; y++)
+            {
+                if (boardState[x,y,2] == 2)
+                {
+
+                }
+            }
+        }
+    }
+
     public void Kill(ref int[,,] currentBoard, int x, int y)
     {
         if (currentBoard[x, y, 0] == currentBoard[x, y, 2])
@@ -635,6 +668,7 @@ public class Board : MonoBehaviour
     // get Valid Moves for pawn
     public List<int> GetValidMoves(int[,,] boardState, int player, int pawn) {
         List<int> validMoves = new List<int>();
+        
         for (int i = 0; i < 5; i++)
         {
             if (CheckValidShadowMove(boardState, player, pawn, i))

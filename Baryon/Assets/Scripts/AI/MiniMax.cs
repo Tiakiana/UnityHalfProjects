@@ -32,7 +32,8 @@ public class MiniMax : MonoBehaviour
 
 
             MINIMAX();
-            MovePawn(BestPawn,BestMove);
+            Debug.Log("I choose the best pawn to be: " + BestPawn + "and best direction is: " + BestMove);
+            MovePawn(BestPawn - 2, BestMove);
 
 
         }
@@ -94,24 +95,35 @@ public class MiniMax : MonoBehaviour
     //og returnerer det alderbedste move for spilleren
     public void MINIMAX()
     {
+        Debug.Log("New Turn");
         BestMove = 9;
         BestPawn = 9;
         BestScore = -9999;
-        for (int pawn = 0; pawn < 3; pawn++)
+        for (int pawn = 2; pawn < 5; pawn++)
         {
             List<int> posibMoves = Board.BoardInst.GetValidMoves(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn);
-
-            for (int move = 0; move < posibMoves.Count; move++)
+            //   Debug.Log(posibMoves[0] + " " + posibMoves[1] + " " + posibMoves[2]);
+            string s = "Pawn number: " + pawn + " Best Moves Are: ";
+            if (posibMoves.Count > 0)
             {
-                float score = MIN(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn, posibMoves[move]), 0);
-                if (score > BestScore)
+                for (int i = 0; i < posibMoves.Count; i++)
                 {
-                    BestMove = posibMoves[move];
-                    BestPawn = pawn;
-                    BestScore = score;
+                    s += posibMoves[i];
                 }
+                Debug.Log(s);
+                for (int move = 0; move < posibMoves.Count; move++)
+                {
+                    float score = MIN(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn, posibMoves[move]), 0);
+                    if (score > BestScore)
+                    {
+                        BestMove = posibMoves[move];
+                        BestPawn = pawn;
+                        BestScore = score;
+                    }
 
+                }
             }
+
 
 
         }
@@ -138,16 +150,20 @@ public class MiniMax : MonoBehaviour
             return EvaluateBoard(boardState, otherPlayerNumber);
         }
 
-        
+
         BestScore = -9999;
         float moveBestScore = -9999;
-        for (int pawn = 0; pawn < 3; pawn++)
+        for (int pawn = 2; pawn < 5; pawn++)
         {
             List<int> posibMoves = Board.BoardInst.GetValidMoves(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn);
 
             for (int move = 0; move < posibMoves.Count; move++)
             {
-                float score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[move]), depth);
+                bool valid = Board.BoardInst.CheckValidShadowMove(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn, posibMoves[move]);
+                float score = -9999;
+                if (valid) {
+                    score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[move]), depth);
+                }
                 if (score > BestScore)
                 {
                     BestMoveOther = posibMoves[move];
@@ -163,7 +179,7 @@ public class MiniMax : MonoBehaviour
         }
         return moveBestScore;
     }
-
+    //Ser tingene fra AI'ens synspunkt
     public float MIN(int[,,] boardState, int depth)
     {
         //if gameover return eval + ending
@@ -183,24 +199,29 @@ public class MiniMax : MonoBehaviour
         }
         if (depth == MaxDepth)
         {
-            return EvaluateBoard(boardState,PlayerNumber);
+            return EvaluateBoard(boardState, PlayerNumber);
         }
 
         BestScoreOther = 9999;
         float moveBestScore = 9999;
-        for (int pawn = 0; pawn < 3; pawn++)
+
+        for (int pawn = 2; pawn < 5; pawn++)
         {
 
             List<int> posibMoves = Board.BoardInst.GetValidMoves(boardState, otherPlayerNumber, pawn);
 
             for (int move = 0; move < posibMoves.Count; move++)
             {
-                float score = MAX(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn, posibMoves[move]), depth + 1);
+                bool valid = Board.BoardInst.CheckValidShadowMove(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn, posibMoves[move]);
+                float score = 9999;
+                if (valid) {
+                    score = MAX(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn, posibMoves[move]), depth + 1);
+                }
                 if (score < BestScore)
                 {
-                    bestMove= posibMoves[move];
-                    bestPawn= pawn;
-                    bestScore= score;
+                    bestMove = posibMoves[move];
+                    bestPawn = pawn;
+                    bestScore = score;
                     moveBestScore = score;
                 }
             }
@@ -212,19 +233,41 @@ public class MiniMax : MonoBehaviour
 
     }
 
-    
+
 
     public float EvaluateBoard(int[,,] boardState, int player)
     {
-        float res = 1 + Random.Range(0.1f,1f);
-        for (int pawn = 0; pawn < 3; pawn++)
+        float res = 0 + Random.Range(0.1f, 1f);
+        for (int x = 0; x < 5; x++)
         {
-            res += 3 * Board.BoardInst.HowManyWillIKillShadow(boardState,player,pawn);
+            for (int y = 0; y < 5; y++)
+            {
+                if (boardState[x, y, 1] == player)
+                {
+                    res += 1;
+                }
+            }
+        }
+
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < 5; y++)
+            {
+                if (boardState[x, y, 1] != player)
+                {
+                    res -= 1;
+                }
+            }
+        }
+
+        for (int pawn = 2; pawn < 5; pawn++)
+        {
+            res += 3 * Board.BoardInst.HowManyWillIKillShadow(boardState, player, pawn);
             if (Board.BoardInst.AmIThreatening(boardState, player, pawn))
             {
                 res += 2;
             }
-            
+
         }
 
 

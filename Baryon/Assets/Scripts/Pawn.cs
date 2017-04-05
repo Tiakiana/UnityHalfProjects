@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using System.Threading;
 
 public class Pawn : MonoBehaviour
 {
@@ -220,9 +221,11 @@ public class Pawn : MonoBehaviour
         }
         return options;
     }
+    
 
     public void Move(Directionale dir)
     {
+        Thread.Sleep(50);
         if (!OnBoard)
         {
             Debug.Log("Not on board");
