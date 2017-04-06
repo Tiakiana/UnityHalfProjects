@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
 
     [Header("References")]
     public RandomAI Randy;
+    public RandomAI Randy2;
     public HeuristicAIPlayer Hubert;
     public MiniMax Minnie;
 
@@ -259,6 +260,14 @@ public class GameManager : MonoBehaviour
                 }
 
             }
+            if (ZeroPlayerMode)
+            {
+                //Randy2.TakeTurn();
+
+                Hubert.TakeTurn();
+                Minnie.TakeTurn();
+
+            }
             //  PlayerTurnText.text = "Moves " + Moves;
 
             if (Moves <=0)
@@ -292,10 +301,27 @@ public class GameManager : MonoBehaviour
 
     }
 
+    int scorepl1 = 0;
+    int scorepl2 = 0;
+    int timesofPlay = 100;
+    int timesplayed = 0;
     public IEnumerator PlayGame()
     {
-        Debug.Log("Starting game");
+        Debug.Log("Starting game nr: " + timesplayed);
         CleanUp();
+
+        if (timesofPlay == timesplayed)
+        {
+            Debug.Log("of a hundred games");
+            Debug.Log("Player 1 had: " +scorepl1);
+            Debug.Log("Player 2 had: " +scorepl2);
+
+            StopAllCoroutines();
+        }
+        else
+        {
+            timesplayed++;
+        }
 
         // Take the turn
 
@@ -310,14 +336,22 @@ public class GameManager : MonoBehaviour
             {
                 player1Won = true;
                 TurnDone = true;
-                Debug.Log("And the grueling battle ended with the victory of Player 1");
+                Debug.Log("And the grueling battle ended with the victory of Player 1." );
+                Debug.Log("Player 1 had " + Player1Points);
 
+                Debug.Log("Player 2 had " + Player2Points);
+                scorepl1++;
             }
             else if (Player2Points > 4)
             {
                 player2Won = true;
                 TurnDone = true;
                 Debug.Log("And the grueling battle ended with the victory of Player 2");
+                Debug.Log("Player 1 had " + Player1Points);
+
+                Debug.Log("Player 2 had " + Player2Points);
+
+                scorepl2++;
             }
            else if (TurnDone)
             {

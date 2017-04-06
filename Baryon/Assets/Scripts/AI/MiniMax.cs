@@ -30,9 +30,9 @@ public class MiniMax : MonoBehaviour
         if (gm.player1sTurn == IsPlayer1)
         {
 
-
             MINIMAX();
-            Debug.Log("I choose the best pawn to be: " + BestPawn + "and best direction is: " + BestMove);
+       //     Debug.Log("Best score is " + BestScore);
+            //Debug.Log("I choose the best pawn to be: " + BestPawn + "and best direction is: " + BestMove+ " With best score " + BestScore);
             MovePawn(BestPawn - 2, BestMove);
 
 
@@ -95,7 +95,7 @@ public class MiniMax : MonoBehaviour
     //og returnerer det alderbedste move for spilleren
     public void MINIMAX()
     {
-        Debug.Log("New Turn");
+ //       Debug.Log("New Turn");
         BestMove = 9;
         BestPawn = 9;
         BestScore = -9999;
@@ -110,16 +110,18 @@ public class MiniMax : MonoBehaviour
                 {
                     s += posibMoves[i];
                 }
-                Debug.Log(s);
+                //Debug.Log(s);
                 for (int move = 0; move < posibMoves.Count; move++)
                 {
                     float score = MIN(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn, posibMoves[move]), 0);
+                   // Debug.Log("Score is " +score +" for pawn " +pawn);
                     if (score > BestScore)
                     {
                         BestMove = posibMoves[move];
                         BestPawn = pawn;
                         BestScore = score;
                     }
+               //     Debug.Log("Current Best score is: " + BestScore);
 
                 }
             }
@@ -151,25 +153,26 @@ public class MiniMax : MonoBehaviour
         }
 
 
-        BestScore = -9999;
-        float moveBestScore = -9999;
+        //BestScore = -9999;
+        //float moveBestScore = -9999;
+        float BestScoreOther = -9999;
         for (int pawn = 2; pawn < 5; pawn++)
         {
             List<int> posibMoves = Board.BoardInst.GetValidMoves(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn);
 
             for (int move = 0; move < posibMoves.Count; move++)
             {
-                bool valid = Board.BoardInst.CheckValidShadowMove(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn, posibMoves[move]);
-                float score = -9999;
-                if (valid) {
-                    score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[move]), depth);
-                }
-                if (score > BestScore)
+         
+                
+
+                float score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[move]), depth);
+                
+                if (score > BestScoreOther)
                 {
                     BestMoveOther = posibMoves[move];
                     BestPawnOther = pawn;
                     BestScoreOther = score;
-                    moveBestScore = score;
+                    //moveBestScore = score;
                 }
 
 
@@ -177,16 +180,16 @@ public class MiniMax : MonoBehaviour
 
 
         }
-        return moveBestScore;
+        //Debug.Log("Mananama" + BestScoreOther);
+        return BestScoreOther;
     }
     //Ser tingene fra AI'ens synspunkt
     public float MIN(int[,,] boardState, int depth)
     {
         //if gameover return eval + ending
         //else if maxdepth return eval
-        int bestMove;
-        int bestPawn;
-        float bestScore;
+        int newbestMove;
+        int newbestPawn;
         //for each other players legal move
         int otherPlayerNumber;
         if (PlayerNumber == 1)
@@ -202,8 +205,9 @@ public class MiniMax : MonoBehaviour
             return EvaluateBoard(boardState, PlayerNumber);
         }
 
-        BestScoreOther = 9999;
-        float moveBestScore = 9999;
+        //BestScoreOther = 9999;
+        float newbestScore = 8888;
+        //culprit is moveBestScore
 
         for (int pawn = 2; pawn < 5; pawn++)
         {
@@ -212,24 +216,26 @@ public class MiniMax : MonoBehaviour
 
             for (int move = 0; move < posibMoves.Count; move++)
             {
-                bool valid = Board.BoardInst.CheckValidShadowMove(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn, posibMoves[move]);
-                float score = 9999;
-                if (valid) {
-                    score = MAX(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn, posibMoves[move]), depth + 1);
-                }
-                if (score < BestScore)
+    
+                
+                float score = MAX(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn, posibMoves[move]), depth + 1);
+                //Debug.Log("Pawn: " + pawn + ", Scores: " + newbestScore + "vs. " + score);
+                if (score < newbestScore)
                 {
-                    bestMove = posibMoves[move];
-                    bestPawn = pawn;
-                    bestScore = score;
-                    moveBestScore = score;
+                    
+                    newbestMove = posibMoves[move];
+                    newbestPawn = pawn;
+                    //bestScore = score;
+                    newbestScore = score;
+                    //Debug.Log("Pawn: " + pawn + ", Scores2: " + newbestScore  + "vs. " + score);
                 }
+                
             }
 
 
         }
-
-        return moveBestScore;
+        
+        return newbestScore;
 
     }
 
@@ -255,7 +261,7 @@ public class MiniMax : MonoBehaviour
             {
                 if (boardState[x, y, 1] != player)
                 {
-                    res -= 1;
+                    res -= 0;
                 }
             }
         }
@@ -265,7 +271,7 @@ public class MiniMax : MonoBehaviour
             res += 3 * Board.BoardInst.HowManyWillIKillShadow(boardState, player, pawn);
             if (Board.BoardInst.AmIThreatening(boardState, player, pawn))
             {
-                res += 2;
+                res += 1;
             }
 
         }

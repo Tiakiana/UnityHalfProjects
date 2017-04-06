@@ -98,7 +98,7 @@ public class HeuristicAIPlayer : MonoBehaviour
 
         }
 
-        Debug.Log("For Pawn: " + pawn.gameObject.name + " " + bestMove + " is the best move");
+      //  Debug.Log("For Pawn: " + pawn.gameObject.name + " " + bestMove + " is the best move");
         res = bestScore;
         return res;
     }
@@ -285,7 +285,7 @@ public BestMove CalcbestMove()
 
         List<BestMove> SortedList = bestMoves.OrderBy(o => o.BestScore).ToList();
         SortedList.Reverse();
-        Debug.Log(bestMoves[0].Direction +" " + bestMoves[1].Direction + " "+ bestMoves[2].Direction);
+       // Debug.Log(bestMoves[0].Direction +" " + bestMoves[1].Direction + " "+ bestMoves[2].Direction);
 
         return SortedList[0];
 
