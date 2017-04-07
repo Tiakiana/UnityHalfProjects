@@ -303,7 +303,7 @@ public class GameManager : MonoBehaviour
 
     int scorepl1 = 0;
     int scorepl2 = 0;
-    int timesofPlay = 10;
+    int timesofPlay = 100;
     int timesplayed = 0;
     public IEnumerator PlayGame()
     {

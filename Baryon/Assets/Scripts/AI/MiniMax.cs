@@ -12,7 +12,7 @@ public class MiniMax : MonoBehaviour
     public bool IsPlayer1 = true;
     [SerializeField]
     private GameManager gm;
-
+    private float alpha = float.MinValue, beta = float.MaxValue;
     int BestMove = 9;
     int BestPawn = 9;
     float BestScore;
@@ -156,31 +156,41 @@ public class MiniMax : MonoBehaviour
         //BestScore = -9999;
         //float moveBestScore = -9999;
         float BestScoreOther = -9999;
-        for (int pawn = 2; pawn < 5; pawn++)
+        bool done = false;
+    done:
+        if (!done)
         {
-            List<int> posibMoves = Board.BoardInst.GetValidMoves(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn);
-
-            for (int move = 0; move < posibMoves.Count; move++)
+            for (int pawn = 2; pawn < 5; pawn++)
             {
-         
-                
+                List<int> posibMoves = Board.BoardInst.GetValidMoves(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn);
 
-                float score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[move]), depth);
-                
-                if (score > BestScoreOther)
+                for (int move = 0; move < posibMoves.Count; move++)
                 {
-                    BestMoveOther = posibMoves[move];
-                    BestPawnOther = pawn;
-                    BestScoreOther = score;
-                    //moveBestScore = score;
+
+
+
+                    float score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[move]), depth);
+                    alpha = score;
+                    if (beta <= alpha)
+                    {
+                        done = true;
+                        goto done;
+                    }
+                    if (score > BestScoreOther)
+                    {
+                        BestMoveOther = posibMoves[move];
+                        BestPawnOther = pawn;
+                        BestScoreOther = score;
+                        //moveBestScore = score;
+                    }
+
+
                 }
 
 
             }
-
-
+            //Debug.Log("Mananama" + BestScoreOther);
         }
-        //Debug.Log("Mananama" + BestScoreOther);
         return BestScoreOther;
     }
     //Ser tingene fra AI'ens synspunkt
@@ -207,34 +217,44 @@ public class MiniMax : MonoBehaviour
 
         //BestScoreOther = 9999;
         float newbestScore = 8888;
-        //culprit is moveBestScore
-
-        for (int pawn = 2; pawn < 5; pawn++)
+        bool done = false;
+    done:
+        if (!done)
         {
+            //culprit is moveBestScore
 
-            List<int> posibMoves = Board.BoardInst.GetValidMoves(boardState, otherPlayerNumber, pawn);
-
-            for (int move = 0; move < posibMoves.Count; move++)
+            for (int pawn = 2; pawn < 5; pawn++)
             {
-    
-                
-                float score = MAX(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn, posibMoves[move]), depth + 1);
-                //Debug.Log("Pawn: " + pawn + ", Scores: " + newbestScore + "vs. " + score);
-                if (score < newbestScore)
+
+                List<int> posibMoves = Board.BoardInst.GetValidMoves(boardState, otherPlayerNumber, pawn);
+
+                for (int move = 0; move < posibMoves.Count; move++)
                 {
-                    
-                    newbestMove = posibMoves[move];
-                    newbestPawn = pawn;
-                    //bestScore = score;
-                    newbestScore = score;
-                    //Debug.Log("Pawn: " + pawn + ", Scores2: " + newbestScore  + "vs. " + score);
+
+
+                    float score = MAX(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn, posibMoves[move]), depth + 1);
+                    //Debug.Log("Pawn: " + pawn + ", Scores: " + newbestScore + "vs. " + score);
+                    beta = score;
+                    if (beta <= alpha)
+                    {
+                        done = true;
+                        goto done;
+                    }
+                    if (score < newbestScore)
+                    {
+
+                        newbestMove = posibMoves[move];
+                        newbestPawn = pawn;
+                        //bestScore = score;
+                        newbestScore = score;
+                        //Debug.Log("Pawn: " + pawn + ", Scores2: " + newbestScore  + "vs. " + score);
+                    }
+
                 }
-                
+
+
             }
-
-
         }
-        
         return newbestScore;
 
     }
