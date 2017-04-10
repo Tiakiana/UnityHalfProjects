@@ -21,7 +21,7 @@ public class MiniMax2 : MonoBehaviour {
     {
         best = new Move(-9999, 9, 9);
      
-        for (int pawn = 0; pawn < 3; pawn++)
+        for (int pawn = 2; pawn < 5; pawn++)
         {
             
             List<int> posibMoves = Board.BoardInst.GetValidMoves(boardState, PlayerNumber, pawn);
@@ -48,7 +48,7 @@ public class MiniMax2 : MonoBehaviour {
         else
         {
           
-            for (int pawn = 0; pawn < 3; pawn++)
+            for (int pawn = 2; pawn < 5; pawn++)
             {
                 List<int> posibMoves = Board.BoardInst.GetValidMoves(tempBoardstate, otherPlayerNumber, pawn);
                 for (int posiMove = 0; posiMove < posibMoves.Count; posiMove++)
@@ -79,7 +79,7 @@ public class MiniMax2 : MonoBehaviour {
         {
         currentDepth++;
 
-            for (int pawn = 0; pawn < 3; pawn++)
+            for (int pawn = 2; pawn < 5; pawn++)
             {
                 List<int> posibMoves = Board.BoardInst.GetValidMoves(tempBoardstate, PlayerNumber, pawn);
                 for (int posiMove = 0; posiMove < posibMoves.Count; posiMove++)
