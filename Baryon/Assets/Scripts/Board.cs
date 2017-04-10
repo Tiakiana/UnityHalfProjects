@@ -543,7 +543,7 @@ public class Board : MonoBehaviour
     public int[,,] GetNewBoardStateShadow(int[,,] oldBoardState, int player, int pawn, int move)
     {
 
-        int[,,] boardState = oldBoardState;
+        int[,,] boardState = oldBoardState.Clone() as int[,,];
         //find pawn
         for (int x = 0; x < 5; x++)
         {

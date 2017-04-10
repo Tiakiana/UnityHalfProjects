@@ -23,8 +23,16 @@ public class MiniMax2 : MonoBehaviour {
      
         for (int pawn = 2; pawn < 5; pawn++)
         {
-            
+         
             List<int> posibMoves = Board.BoardInst.GetValidMoves(boardState, PlayerNumber, pawn);
+        
+
+            string s = " ";
+            for (int i = 0; i < posibMoves.Count; i++)
+            {
+                s += posibMoves[i];
+            }
+          //  Debug.Log("The moves are " + s + " For pawn: " + pawn  + "    Player: " + PlayerNumber);
             for (int posiMove = 0; posiMove < posibMoves.Count; posiMove++)
             {
                 Move m = new Move(-9999, pawn, posibMoves[posiMove]);
@@ -56,7 +64,7 @@ public class MiniMax2 : MonoBehaviour {
                     best.score = 9999;
                     Move m = new Move(9999, pawn, posibMoves[posiMove]);
                     tempBoardstate = Board.BoardInst.GetNewBoardStateShadow(tempBoardstate, otherPlayerNumber, pawn, posibMoves[posiMove]);
-                    Debug.Log("What min thinks");
+                  //  Debug.Log("What min thinks");
                     Board.BoardInst.SeeThePawnsOfShadow(tempBoardstate);
                     m.score = MAX();
                     if (m.score < best.score)
@@ -87,7 +95,7 @@ public class MiniMax2 : MonoBehaviour {
                     best.score = -9999;
                     Move m = new Move(-9999, pawn, posibMoves[posiMove]);
                     tempBoardstate = Board.BoardInst.GetNewBoardStateShadow(tempBoardstate, PlayerNumber, pawn, posibMoves[posiMove]);
-                    Debug.Log("What Max thinks");
+                    //Debug.Log("What Max thinks");
                     Board.BoardInst.SeeThePawnsOfShadow(tempBoardstate);
 
                     m.score = MAX();
@@ -204,6 +212,7 @@ public class MiniMax2 : MonoBehaviour {
             MINIMAX(Board.BoardInst.ConvertToBoardState());
             //     Debug.Log("Best score is " + BestScore);
             //Debug.Log("I choose the best pawn to be: " + BestPawn + "and best direction is: " + BestMove+ " With best score " + BestScore);
+            System.Threading.Thread.Sleep(1000);
             MovePawn(best.pawn-2, best.direction);
 
 
