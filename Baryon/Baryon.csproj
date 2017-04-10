@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\AI\HeuristicAIPlayer.cs" />
     <Compile Include="Assets\Scripts\AI\MiniMax.cs" />
     <Compile Include="Assets\Scripts\AI\MiniMax1.cs" />
+    <Compile Include="Assets\Scripts\AI\MiniMax2.cs" />
     <Compile Include="Assets\Scripts\AI\Perception.cs" />
     <Compile Include="Assets\Scripts\AI\RandomAI.cs" />
     <Compile Include="Assets\Scripts\Board.cs" />

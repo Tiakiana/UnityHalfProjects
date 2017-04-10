@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     public RandomAI Randy2;
     public HeuristicAIPlayer Hubert;
     public MiniMax Minnie;
+    public MiniMax2 Minjimaru;
 
     public Text Player1ScoreText, Player2ScoreText, PlayerTurnText;
     public GameObject MovePanel;
@@ -265,7 +266,7 @@ public class GameManager : MonoBehaviour
                 //Randy2.TakeTurn();
 
                 Hubert.TakeTurn();
-                Minnie.TakeTurn();
+                Minjimaru.TakeTurn();
 
             }
             //  PlayerTurnText.text = "Moves " + Moves;

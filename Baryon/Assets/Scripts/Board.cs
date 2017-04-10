@@ -683,12 +683,14 @@ public class Board : MonoBehaviour
     // Time for testing
     void Update()
     {
+
+
         if (Input.GetKeyUp("g"))
         {
           
             Debug.Log("Doing stuff");
             string s = "";
-            foreach (int item in GetValidMoves(ConvertToBoardState(), 1, 2))
+            foreach (int item in GetValidMoves(ConvertToBoardState(), 2, 2))
             {
                 s += " " + item;
             }
@@ -701,10 +703,5 @@ public class Board : MonoBehaviour
 
     
 
-
-    // Test i morgen
-    // der skal laves skyggespil, som foretager hemmelige træk
-    // her er det vigtigt at tjekke at den husker at den ikke må gå baglæns
-    // husk der er noget i start du lige skal kigge på.
-    //
+    
 }
