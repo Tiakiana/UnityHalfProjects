@@ -133,7 +133,7 @@ public class MiniMax2 : MonoBehaviour {
             {
                 if (boardState[x, y, 1] == player)
                 {
-                    res = res - 1;
+                    res = res - 12;
                 }
             }
         }
@@ -144,7 +144,7 @@ public class MiniMax2 : MonoBehaviour {
             {
                 if (boardState[x, y, 1] == otherplayer)
                 {
-                    res+=1 ;
+                    res+=12 ;
                 }
             }
         }
@@ -152,7 +152,7 @@ public class MiniMax2 : MonoBehaviour {
         for (int pawn = 2; pawn < 5; pawn++)
         {
             //A:
-            res = res + (-12 * Board.BoardInst.HowManyWillIKillShadow(boardState, player, pawn));
+            res = res + (-1 * Board.BoardInst.HowManyWillIKillShadow(boardState, player, pawn));
 
             //B:
             if (Board.BoardInst.AmIThreatening(boardState, player, pawn))

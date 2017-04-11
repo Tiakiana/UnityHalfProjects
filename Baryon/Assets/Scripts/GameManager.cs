@@ -265,7 +265,7 @@ public class GameManager : MonoBehaviour
             {
                 //Randy2.TakeTurn();
 
-                Randy2.TakeTurn();
+                Hubert.TakeTurn();
                 Minjimaru.TakeTurn();
 
             }
