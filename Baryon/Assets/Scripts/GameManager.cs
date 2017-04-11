@@ -257,7 +257,7 @@ public class GameManager : MonoBehaviour
                 }
                 if (AIPlayerLevel == 3)
                 {
-                    Minnie.TakeTurn();
+                    Minjimaru.TakeTurn();
                 }
 
             }
@@ -265,7 +265,7 @@ public class GameManager : MonoBehaviour
             {
                 //Randy2.TakeTurn();
 
-                Hubert.TakeTurn();
+                Randy2.TakeTurn();
                 Minjimaru.TakeTurn();
 
             }

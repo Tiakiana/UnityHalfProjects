@@ -32,14 +32,16 @@ public class MiniMax2 : MonoBehaviour {
             {
                 s += posibMoves[i];
             }
-          //  Debug.Log("The moves are " + s + " For pawn: " + pawn  + "    Player: " + PlayerNumber);
+           // Debug.Log("The moves are " + s + " For pawn: " + pawn  + "    Player: " + PlayerNumber);
             for (int posiMove = 0; posiMove < posibMoves.Count; posiMove++)
             {
                 Move m = new Move(-9999, pawn, posibMoves[posiMove]);
                 tempBoardstate = Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove]);
+
                 m.score = MIN();
                 if (m.score > best.score)
                 {
+                 //    Debug.Log("Pawn: " + pawn + " direction: " +m.direction + "Score is: " + m.score);
                     best = m.Clone() as Move;
                 }
 
@@ -111,35 +113,51 @@ public class MiniMax2 : MonoBehaviour {
     }
     public float EVAL(int[,,] boardState, int player)
     {
-        float res = 0 + Random.Range(0.1f, 1f);
+        int otherplayer;
+        if (player == 1)
+        {
+            otherplayer = 2;
+        }
+        else
+        {
+            otherplayer = 1;
+        }
+
+        // sætter et slutresultat, som vi kan give videre. Der bliver lagt en random på til at breake ties.
+        float res = 0 + Random.Range(0.1f, 0.99f);
+
+        // her lægger itererer vi igennem brættet for at se hvor mange point det er værd at vi står på brættet.
         for (int x = 0; x < 5; x++)
         {
             for (int y = 0; y < 5; y++)
             {
                 if (boardState[x, y, 1] == player)
                 {
-                    res = res + 1;
+                    res = res - 1;
                 }
             }
         }
-
+        // Kigger på og giver minus point for alle af modstanderens brikker der er ude.
         for (int x = 0; x < 5; x++)
         {
             for (int y = 0; y < 5; y++)
             {
-                if (boardState[x, y, 1] != player)
+                if (boardState[x, y, 1] == otherplayer)
                 {
-                    res = res;
+                    res+=1 ;
                 }
             }
         }
-
+        //tjekker hver pawn, for at se om den A: kan slå nogen ihjel, eller B: true nogen.
         for (int pawn = 2; pawn < 5; pawn++)
         {
-            res = res + 3 * Board.BoardInst.HowManyWillIKillShadow(boardState, player, pawn);
+            //A:
+            res = res + (-12 * Board.BoardInst.HowManyWillIKillShadow(boardState, player, pawn));
+
+            //B:
             if (Board.BoardInst.AmIThreatening(boardState, player, pawn))
             {
-                res = res + 1;
+                res = res - 1;
             }
 
         }
@@ -212,7 +230,7 @@ public class MiniMax2 : MonoBehaviour {
             MINIMAX(Board.BoardInst.ConvertToBoardState());
             //     Debug.Log("Best score is " + BestScore);
             //Debug.Log("I choose the best pawn to be: " + BestPawn + "and best direction is: " + BestMove+ " With best score " + BestScore);
-            System.Threading.Thread.Sleep(1000);
+           // System.Threading.Thread.Sleep(1000);
             MovePawn(best.pawn-2, best.direction);
 
 
