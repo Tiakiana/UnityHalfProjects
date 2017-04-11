@@ -9,6 +9,7 @@ public class MiniMax2 : MonoBehaviour {
     private int otherPlayerNumber;
    // int[,,] tempBoardstate = new int[5, 5, 3];
     private Move best;
+    private Move myBest;
    public int maxDepth = 3;
    public int currentDepth = 0;
 
@@ -20,6 +21,7 @@ public class MiniMax2 : MonoBehaviour {
     public void MINIMAX(int[,,] boardState)
     {
         best = new Move(-9999, 9, 9);
+        myBest = new Move(-9999, 9, 9);
      
         for (int pawn = 2; pawn < 5; pawn++)
         {
@@ -32,17 +34,17 @@ public class MiniMax2 : MonoBehaviour {
             {
                 s += posibMoves[i];
             }
-           // Debug.Log("The moves are " + s + " For pawn: " + pawn  + "    Player: " + PlayerNumber);
+            Debug.Log("The moves are " + s + " For pawn: " + pawn  + "    Player: " + PlayerNumber);
             for (int posiMove = 0; posiMove < posibMoves.Count; posiMove++)
             {
                 Move m = new Move(-9999, pawn, posibMoves[posiMove]);
                 // tempBoardstate = Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove]);
 
-                m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove]));
-                if (m.score > best.score)
+                m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, otherPlayerNumber, pawn, posibMoves[posiMove]));
+                if (m.score >= myBest.score)
                 {
-                 //    Debug.Log("Pawn: " + pawn + " direction: " +m.direction + "Score is: " + m.score);
-                    best = m.Clone() as Move;
+                     Debug.Log("Pawn: " + pawn + " direction: " +m.direction + "Score is: " + m.score);
+                    myBest = m.Clone() as Move;
                 }
 
             }
@@ -68,7 +70,7 @@ public class MiniMax2 : MonoBehaviour {
                     //tempBoardstate = Board.BoardInst.GetNewBoardStateShadow(tempBoardstate, otherPlayerNumber, pawn, posibMoves[posiMove]);
                   //  Debug.Log("What min thinks");
                     //Board.BoardInst.SeeThePawnsOfShadow(Board.BoardInst.ConvertToBoardState());
-                    m.score = MAX(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn, posibMoves[posiMove]));
+                    m.score = MAX(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove]));
                     if (m.score < best.score)
                     {
                         best = m.Clone() as Move;
@@ -100,7 +102,7 @@ public class MiniMax2 : MonoBehaviour {
                     //Debug.Log("What Max thinks");
                     //Board.BoardInst.SeeThePawnsOfShadow(Board.BoardInst.ConvertToBoardState());
 
-                    m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn, posibMoves[posiMove]));
+                    m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove]));
                     if (m.score > best.score)
                     {
                         best = m.Clone() as Move;
@@ -134,7 +136,7 @@ public class MiniMax2 : MonoBehaviour {
             {
                 if (boardState[x, y, 1] == player)
                 {
-                    res = res + 12;
+                    res = res - 12;
                 }
             }
         }
@@ -145,7 +147,7 @@ public class MiniMax2 : MonoBehaviour {
             {
                 if (boardState[x, y, 1] == otherplayer)
                 {
-                    res-=12 ;
+                    res+=12 ;
                 }
             }
         }
@@ -153,12 +155,12 @@ public class MiniMax2 : MonoBehaviour {
         for (int pawn = 2; pawn < 5; pawn++)
         {
             //A:
-            res = res + (+3 * Board.BoardInst.HowManyWillIKillShadow(boardState, player, pawn));
+            res = res + (-3 * Board.BoardInst.HowManyWillIKillShadow(boardState, player, pawn));
 
             //B:
             if (Board.BoardInst.AmIThreatening(boardState, player, pawn))
             {
-                res = res + 1;
+                res = res - 3;
             }
 
         }
@@ -232,7 +234,7 @@ public class MiniMax2 : MonoBehaviour {
             //     Debug.Log("Best score is " + BestScore);
             //Debug.Log("I choose the best pawn to be: " + BestPawn + "and best direction is: " + BestMove+ " With best score " + BestScore);
            // System.Threading.Thread.Sleep(1000);
-            MovePawn(best.pawn-2, best.direction);
+            MovePawn(myBest.pawn-2, myBest.direction);
 
 
         }
