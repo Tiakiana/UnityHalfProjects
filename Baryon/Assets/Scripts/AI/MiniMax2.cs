@@ -34,16 +34,16 @@ public class MiniMax2 : MonoBehaviour {
             {
                 s += posibMoves[i];
             }
-            Debug.Log("The moves are " + s + " For pawn: " + pawn  + "    Player: " + PlayerNumber);
+      //      Debug.Log("The moves are " + s + " For pawn: " + pawn  + "    Player: " + PlayerNumber);
             for (int posiMove = 0; posiMove < posibMoves.Count; posiMove++)
             {
                 Move m = new Move(-9999, pawn, posibMoves[posiMove]);
                 // tempBoardstate = Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove]);
 
-                m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, otherPlayerNumber, pawn, posibMoves[posiMove]));
+                m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, otherPlayerNumber, pawn, posibMoves[posiMove])) + EVAL(boardState, PlayerNumber,pawn);
                 if (m.score >= myBest.score)
                 {
-                     Debug.Log("Pawn: " + pawn + " direction: " +m.direction + "Score is: " + m.score);
+               //      Debug.Log("Pawn: " + pawn + " direction: " +m.direction + "Score is: " + m.score);
                     myBest = m.Clone() as Move;
                 }
 
@@ -53,12 +53,12 @@ public class MiniMax2 : MonoBehaviour {
     }
     public float MIN(int[,,] boardState)
     {
-        if (maxDepth == currentDepth)
-        {
-            return EVAL(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber);
-        }
-        else
-        {
+      //  if (maxDepth == currentDepth)
+     //   {
+         //   return EVAL(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber);
+     //   }
+     //   else
+       // {
           
             for (int pawn = 2; pawn < 5; pawn++)
             {
@@ -70,7 +70,7 @@ public class MiniMax2 : MonoBehaviour {
                     //tempBoardstate = Board.BoardInst.GetNewBoardStateShadow(tempBoardstate, otherPlayerNumber, pawn, posibMoves[posiMove]);
                   //  Debug.Log("What min thinks");
                     //Board.BoardInst.SeeThePawnsOfShadow(Board.BoardInst.ConvertToBoardState());
-                    m.score = MAX(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove]));
+                    m.score = MAX(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove])) + EVAL(boardState,otherPlayerNumber,pawn);
                     if (m.score < best.score)
                     {
                         best = m.Clone() as Move;
@@ -79,13 +79,13 @@ public class MiniMax2 : MonoBehaviour {
                 }
             }
             return best.score;
-        }
+       // }
     }
     public float MAX(int[,,] boardState)
     {
         if (maxDepth == currentDepth)
         {
-            return EVAL(Board.BoardInst.ConvertToBoardState(), PlayerNumber);
+            return EVAL(Board.BoardInst.ConvertToBoardState(), PlayerNumber,9);
         }
         else
         {
@@ -102,7 +102,7 @@ public class MiniMax2 : MonoBehaviour {
                     //Debug.Log("What Max thinks");
                     //Board.BoardInst.SeeThePawnsOfShadow(Board.BoardInst.ConvertToBoardState());
 
-                    m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove]));
+                    m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, otherPlayerNumber, pawn, posibMoves[posiMove])) - EVAL(boardState,PlayerNumber,pawn);
                     if (m.score > best.score)
                     {
                         best = m.Clone() as Move;
@@ -114,7 +114,16 @@ public class MiniMax2 : MonoBehaviour {
             return best.score;
         }
     }
-    public float EVAL(int[,,] boardState, int player)
+    public float EVAL2(int[,,] boardState, int player, int pawnMoved, int pointsForThisPlayer) {
+        float res = Random.Range(0, 0.99f);
+
+        res += 10 * pointsForThisPlayer;
+
+        return res;
+
+    }
+
+    public float EVAL(int[,,] boardState, int player, int pawnMoved)
     {
         int otherplayer;
         if (player == 1)
@@ -127,16 +136,16 @@ public class MiniMax2 : MonoBehaviour {
         }
 
         // sætter et slutresultat, som vi kan give videre. Der bliver lagt en random på til at breake ties.
-        float res = 0 + Random.Range(0.1f, 0.99f);
+        float res = 0;// + Random.Range(0.1f, 0.99f);
 
-        // her lægger itererer vi igennem brættet for at se hvor mange point det er værd at vi står på brættet.
+        // her  itererer vi igennem brættet for at se hvor mange point det er værd at vi står på brættet.
         for (int x = 0; x < 5; x++)
         {
             for (int y = 0; y < 5; y++)
             {
                 if (boardState[x, y, 1] == player)
                 {
-                    res = res - 12;
+                    res = res + 1;
                 }
             }
         }
@@ -147,26 +156,27 @@ public class MiniMax2 : MonoBehaviour {
             {
                 if (boardState[x, y, 1] == otherplayer)
                 {
-                    res+=12 ;
+                    res-=1 ;
                 }
             }
         }
+        res = res + (10 * Board.BoardInst.HowManyWillIKillShadow(boardState, player, pawnMoved));
         //tjekker hver pawn, for at se om den A: kan slå nogen ihjel, eller B: true nogen.
         for (int pawn = 2; pawn < 5; pawn++)
         {
             //A:
-            res = res + (-3 * Board.BoardInst.HowManyWillIKillShadow(boardState, player, pawn));
+      
 
             //B:
             if (Board.BoardInst.AmIThreatening(boardState, player, pawn))
             {
-                res = res - 3;
+                res = res+ 2;
             }
 
         }
 
 
-        return res;
+        return  res;
     }
     public class Move: System.ICloneable {
        public float score;
@@ -268,6 +278,11 @@ public class MiniMax2 : MonoBehaviour {
     }
     // Update is called once per frame
     void Update () {
-	
+        if (Input.GetKeyDown("e"))
+        {
+            Debug.Log("Player 2: " + EVAL(Board.BoardInst.ConvertToBoardState(), 2, 9));
+
+            Debug.Log ("Player 1: " + EVAL(Board.BoardInst.ConvertToBoardState(), 1,9));
+        }
 	}
 }

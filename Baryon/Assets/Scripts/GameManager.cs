@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
     private Camera c;
     private MovePanelScr movePanelScr;
-    private int Player1Points, Player2Points;
+    public int Player1Points, Player2Points;
 
     [Header("PlayModes")]
     public bool TwoPlayerMode = false;
