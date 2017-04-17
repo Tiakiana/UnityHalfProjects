@@ -232,7 +232,8 @@ public class Board : MonoBehaviour
 
     }
 
-    public void FindPawn(int[,,] boardState, int player, int pawn, out int ex, out int yh) {
+    public void FindPawn(int[,,] boardState, int player, int pawn, out int ex, out int yh)
+    {
         ex = 9;
         yh = 9;
         for (int x = 0; x < 5; x++)
@@ -247,7 +248,7 @@ public class Board : MonoBehaviour
             }
         }
 
-        
+
 
     }
 
@@ -266,12 +267,65 @@ public class Board : MonoBehaviour
 
     // Alt Shadow play begynder her
 
+    public int HowManyWillIKillShadow(int[,,] boardState, int player, int pawn, int direction)
+    {
+        int res = 0;
+        // int ex = 9;
+        // int yh = 9;
+        // FindPawn(boardState,player,pawn,out ex,out yh);
+
+        int ex = 0;
+        int yh = 0;
+
+        switch (direction)
+        {
+            case 0:
+                ex = -1;
+                break;
+
+            case 1:
+                yh = 1;
+                break;
+
+            case 2:
+                ex = 1;
+                break;
+
+            case 3:
+                yh = -1;
+                break;
+            default:
+                break;
+        }
+
+        if (!Board.BoardInst.IsPawnOnBoard(boardState, player, pawn))
+        {
+            return 0;
+        }
+        else
+        {
+            for (int x = 0; x < 5; x++)
+            {
+
+                for (int y = 0; y < 5; y++)
+                {
+                    if (boardState[x, y, 1] != 0 && boardState[x, y, 1] != player && boardState[x, y, 0] == pawn)
+                    {
+                        res++;
+                    }
+                }
+            }
+            return res;
+
+        }
+
+    }
     public int HowManyWillIKillShadow(int[,,] boardState, int player, int pawn)
     {
         int res = 0;
-       // int ex = 9;
-       // int yh = 9;
-       // FindPawn(boardState,player,pawn,out ex,out yh);
+        // int ex = 9;
+        // int yh = 9;
+        // FindPawn(boardState,player,pawn,out ex,out yh);
         if (!Board.BoardInst.IsPawnOnBoard(boardState, player, pawn))
         {
             return 0;
@@ -584,15 +638,7 @@ public class Board : MonoBehaviour
 
         int[,,] boardState = oldBoardState.Clone() as int[,,];
         //find pawn
-        for (int x = 0; x < 5; x++)
-        {
-            string s = "| ";
-            for (int y = 4; y >= 0; y--)
-            {
-                s += " " + oldBoardState[x, y, 2];
-            }
-            //Debug.Log(s);
-        }
+
 
         for (int x = 0; x < 5; x++)
         {
@@ -649,6 +695,8 @@ public class Board : MonoBehaviour
                 }
             }
         }
+      //  Debug.Log("Either illegal move or could not find on board");
+
         // lægger brik på bræt;
         if (player == 1)
         {
@@ -668,10 +716,13 @@ public class Board : MonoBehaviour
             boardState[2, 4, 1] = 2;
             boardState[2, 4, 2] = pawn;
         }
-
         return boardState;
     }
-    public int[,,] GetNewBoardStateShadow(int[,,] oldBoardState, int player, int pawn, int move,int points,out int newPoints)
+
+
+
+
+    public int[,,] GetNewBoardStateShadow(int[,,] oldBoardState, int player, int pawn, int move, int points, out int newPoints)
     {
         newPoints = points;
         int[,,] boardState = oldBoardState.Clone() as int[,,];
@@ -764,6 +815,39 @@ public class Board : MonoBehaviour
         return boardState;
     }
 
+    public void SeeTheBoardOfShadow(int[,,] boardState, int i)
+    {
+        switch (i)
+        {
+            case 0:
+                Debug.Log("Showing squares");
+                break;
+
+            case 1:
+                Debug.Log("showing player ownage");
+                break;
+
+            case 2:
+                Debug.Log("showing player pawn");
+                break;
+
+
+            default:
+                break;
+        }
+        string s = "";
+
+        for (int y = 4; y >= 0; y--)
+        {
+            for (int x = 0; x < 5; x++)
+            {
+                s += boardState[x, y, i] + "  ";
+            }
+            s += "\n";// Debug.Log(s);
+        }
+        Debug.Log(s);
+    }
+
     public void SeeThePawnsOfShadow(int[,,] boardState)
     {
         for (int x = 0; x < 5; x++)
@@ -818,7 +902,7 @@ public class Board : MonoBehaviour
     // Time for testing
     void Update()
     {
-
+/*
 
         if (Input.GetKeyUp("g"))
         {
@@ -834,6 +918,31 @@ public class Board : MonoBehaviour
 
             //  Debug.Log(ConvertToBoardState()[0,1]);
         }
+        if (Input.GetKeyDown("q"))
+        {
+
+            //     SeeTheBoardOfShadow(ConvertToBoardState(), 0);
+            //     SeeTheBoardOfShadow(ConvertToBoardState(), 1);
+            // Debug.Log("Nuværende brætstadie");
+            //SeeTheBoardOfShadow(ConvertToBoardState(), 2);
+            //Debug.Log("Hvis jeg rykker blå for spiller 1 en frem");
+            // SeeTheBoardOfShadow(GetNewBoardStateShadow(ConvertToBoardState(),1,2,0),2);
+            // SeeTheBoardOfShadow(GetNewBoardStateShadow(ConvertToBoardState(), 1, 2, 1), 2);
+            // SeeTheBoardOfShadow(GetNewBoardStateShadow(ConvertToBoardState(),2,4,5),2);
+            List<int> validmoves = GetValidMoves(ConvertToBoardState(), 2, 2);
+            for (int x = 2; x < 5; x++)
+            {
+                validmoves = GetValidMoves(ConvertToBoardState(), 2, x);
+                string s = "";
+                for (int i = 0; i < validmoves.Count; i++)
+                {
+                    s += " " + validmoves[i];
+                }
+
+                Debug.Log(s);
+            }
+        }
+    */
     }
 
 
