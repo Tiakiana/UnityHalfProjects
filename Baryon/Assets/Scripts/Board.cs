@@ -351,6 +351,61 @@ public class Board : MonoBehaviour
 
     int ShadowPoints1;
     int ShadowPoints2;
+    public int[,,] ConvertToBoardState2()
+    {
+        int[,,] boardState = new int[5, 5, 5];
+
+        ShadowPoints1 = GameManager.GmInst.Player1Points;
+        ShadowPoints2 = GameManager.GmInst.Player2Points;
+        boardState[0,0,3] = GameManager.GmInst.Player1Points;
+        boardState[0,0,4] = GameManager.GmInst.Player2Points;
+
+
+        //set square colour
+        //0 = white, 1 = black, 2 = blue, 3 = red, 4 = green
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < 5; y++)
+            {
+                boardState[x, y, 0] = (int)Squares[x, y].SQColour;
+            }
+
+        }
+        //set if player and who owns it
+        //0 = empty, 1 = player one owned, 2 = player two owned
+
+        //Also set pawn colour while we're at it.
+        for (int x = 0; x < 5; x++)
+        {
+            for (int y = 0; y < 5; y++)
+            {
+                if (Squares[x, y].Occupant != null)
+                {
+                    if (Squares[x, y].Occupant.GetComponent<Pawn>().Player1Owned)
+                    {
+                        boardState[x, y, 1] = 1;
+                        boardState[x, y, 2] = (int)Squares[x, y].Occupant.GetComponent<Pawn>().Colour;
+                    }
+                    else
+                    {
+                        boardState[x, y, 1] = 2;
+                        boardState[x, y, 2] = (int)Squares[x, y].Occupant.GetComponent<Pawn>().Colour;
+
+                    }
+                }
+                else
+                {
+                    boardState[x, y, 1] = 0;
+                }
+            }
+
+        }
+        // Set player Pawn Colour
+
+
+
+        return boardState;
+    }
     public int[,,] ConvertToBoardState()
     {
         int[,,] boardState = new int[5, 5, 3];
@@ -702,6 +757,7 @@ public class Board : MonoBehaviour
         {
             if (boardState[2, 0, 1] == 2)
             {
+                boardState[0, 0, 3] += 1;
                 //give point and extra move
             }
             boardState[2, 0, 1] = 1;
@@ -711,6 +767,8 @@ public class Board : MonoBehaviour
         {
             if (boardState[2, 4, 1] == 1)
             {
+                boardState[0, 0, 4] += 1;
+
                 //give point and extra move
             }
             boardState[2, 4, 1] = 2;
@@ -876,6 +934,7 @@ public class Board : MonoBehaviour
                     {
                         currentBoard[ex, yh, 1] = 0;
                         currentBoard[ex, yh, 2] = 0;
+                        currentBoard[0, 0, 2 + player]++;
                         //Giv point og ekstra tur
                     }
                 }

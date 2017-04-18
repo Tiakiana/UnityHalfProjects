@@ -11,7 +11,7 @@ public class MiniMax2 : MonoBehaviour {
     private Move best;
     private Move myBest;
    public int maxDepth = 3;
-   public int currentDepth = 0;
+   //public int currentDepth = 0;
 
     //UnitySpecifik:
     public GameManager gm;
@@ -27,7 +27,7 @@ public class MiniMax2 : MonoBehaviour {
         {
          
             List<int> posibMoves = Board.BoardInst.GetValidMoves(boardState, PlayerNumber, pawn);
-        
+            int currentDepth = 0;
 
             string s = " ";
             for (int i = 0; i < posibMoves.Count; i++)
@@ -40,7 +40,7 @@ public class MiniMax2 : MonoBehaviour {
                 Move m = new Move(-9999, pawn, posibMoves[posiMove]);
                 // tempBoardstate = Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove]);
 
-                m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, otherPlayerNumber, pawn, posibMoves[posiMove])) + EVAL(boardState, PlayerNumber,pawn);
+                m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, otherPlayerNumber, pawn, posibMoves[posiMove]), currentDepth + 1);
              
 
                 if (m.score >= myBest.score)
@@ -53,18 +53,18 @@ public class MiniMax2 : MonoBehaviour {
         }
 
     }
-    public float MIN(int[,,] boardState)
+    public float MIN(int[,,] boardState, int currentDepth)
     {
-      //  if (maxDepth == currentDepth)
-     //   {
-         //   return EVAL(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber);
-     //   }
-     //   else
-       // {
+        if (maxDepth == currentDepth)
+        {
+            return EVAL(Board.BoardInst.ConvertToBoardState2(), otherPlayerNumber);
+        }
+        else
+        {
           
             for (int pawn = 2; pawn < 5; pawn++)
             {
-                List<int> posibMoves = Board.BoardInst.GetValidMoves(Board.BoardInst.ConvertToBoardState(), otherPlayerNumber, pawn);
+                List<int> posibMoves = Board.BoardInst.GetValidMoves(Board.BoardInst.ConvertToBoardState2(), otherPlayerNumber, pawn);
                 for (int posiMove = 0; posiMove < posibMoves.Count; posiMove++)
                 {
                     best.score = 9999;
@@ -72,7 +72,7 @@ public class MiniMax2 : MonoBehaviour {
                     //tempBoardstate = Board.BoardInst.GetNewBoardStateShadow(tempBoardstate, otherPlayerNumber, pawn, posibMoves[posiMove]);
                   //  Debug.Log("What min thinks");
                     
-                    m.score = MAX(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove])) + EVAL(boardState,otherPlayerNumber,pawn);
+                    m.score = MAX(Board.BoardInst.GetNewBoardStateShadow(boardState, PlayerNumber, pawn, posibMoves[posiMove]), currentDepth + 1);
                     if (m.score < best.score)
                     {
                         best = m.Clone() as Move;
@@ -81,13 +81,13 @@ public class MiniMax2 : MonoBehaviour {
                 }
             }
             return best.score;
-       // }
+        }
     }
-    public float MAX(int[,,] boardState)
+    public float MAX(int[,,] boardState, int currentDepth)
     {
         if (maxDepth == currentDepth)
         {
-            return EVAL(Board.BoardInst.ConvertToBoardState(), PlayerNumber,9);
+            return EVAL(Board.BoardInst.ConvertToBoardState2(), PlayerNumber);
         }
         else
         {
@@ -95,7 +95,7 @@ public class MiniMax2 : MonoBehaviour {
 
             for (int pawn = 2; pawn < 5; pawn++)
             {
-                List<int> posibMoves = Board.BoardInst.GetValidMoves(Board.BoardInst.ConvertToBoardState(), PlayerNumber, pawn);
+                List<int> posibMoves = Board.BoardInst.GetValidMoves(Board.BoardInst.ConvertToBoardState2(), PlayerNumber, pawn);
                 for (int posiMove = 0; posiMove < posibMoves.Count; posiMove++)
                 {
                     best.score = -9999;
@@ -104,7 +104,7 @@ public class MiniMax2 : MonoBehaviour {
                     //Debug.Log("What Max thinks");
                     //Board.BoardInst.SeeThePawnsOfShadow(Board.BoardInst.ConvertToBoardState());
 
-                    m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, otherPlayerNumber, pawn, posibMoves[posiMove])) + EVAL(boardState,PlayerNumber,pawn);
+                    m.score = MIN(Board.BoardInst.GetNewBoardStateShadow(boardState, otherPlayerNumber, pawn, posibMoves[posiMove]), currentDepth + 1);
                     if (m.score > best.score)
                     {
                         best = m.Clone() as Move;
@@ -112,7 +112,7 @@ public class MiniMax2 : MonoBehaviour {
 
                 }
             }
-            currentDepth--;
+            
             return best.score;
         }
     }
@@ -129,7 +129,7 @@ public class MiniMax2 : MonoBehaviour {
 
     }
 
-    public float EVAL(int[,,] boardState, int player, int pawnMoved)
+    public float EVAL(int[,,] boardState, int player)
     {
         //Board.BoardInst.SeeTheBoardOfShadow(boardState, 1);
      //   Board.BoardInst.SeeTheBoardOfShadow(boardState, 2);
@@ -143,9 +143,14 @@ public class MiniMax2 : MonoBehaviour {
             otherplayer = 1;
         }
 
+        
+
+
         // sætter et slutresultat, som vi kan give videre. Der bliver lagt en random på til at breake ties.
         float res = 0;// + Random.Range(0.1f, 0.99f);
-
+        res += 10 * boardState[0, 0, 2 + player];
+        res += 10 * boardState[0, 0, 2 + otherplayer];
+ 
         // her  itererer vi igennem brættet for at se hvor mange point det er værd at vi står på brættet.
         for (int x = 0; x < 5; x++)
         {
@@ -248,7 +253,7 @@ public class MiniMax2 : MonoBehaviour {
         if (gm.player1sTurn == IsPlayer1)
         {
 
-            MINIMAX(Board.BoardInst.ConvertToBoardState());
+            MINIMAX(Board.BoardInst.ConvertToBoardState2());
             //     Debug.Log("Best score is " + BestScore);
             //Debug.Log("I choose the best pawn to be: " + BestPawn + "and best direction is: " + BestMove+ " With best score " + BestScore);
            // System.Threading.Thread.Sleep(1000);
