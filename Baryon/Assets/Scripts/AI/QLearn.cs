@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 
 public class QLearn : MonoBehaviour {
@@ -9,7 +10,27 @@ public class QLearn : MonoBehaviour {
 	void Start () {
 	
 	}
+    public class QNode {
 
+
+        public QNode Parent;
+        public List<QNode> Moves;
+        public float Value;
+        public int BoardState;
+        public QNode(QNode parentnode, int boardState) {
+            Parent = parentnode;
+            Value = 0.5f;
+            BoardState = boardState;
+
+        }
+        public QNode()
+        {
+            Parent = null;
+            Value = 0.5f;
+
+        }
+
+    }
     public int HashBoardState() {
         int[,,] ex = Board.BoardInst.ConvertToBoardState();
         string s = "";
