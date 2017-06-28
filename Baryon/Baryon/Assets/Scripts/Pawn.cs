@@ -293,7 +293,10 @@ public class Pawn : MonoBehaviour
                 
                 break;
 
-          
+            case Directionale.In:
+                GameManager.GmInst.PutPawnOnBoard(this);
+
+                break;
 
             default:
                 Debug.Log(dir);

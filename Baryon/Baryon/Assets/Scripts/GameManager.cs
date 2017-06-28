@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public bool OnePlayerMode = false;
     public bool GameMasterMode = false;
     public int AIPlayerLevel = 1;
+    
 
     public static GameManager GmInst;
 
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
     public MiniMax2 Minjimaru;
     public QLearn Quinten;
     public QLearnP2 Quinten2;
+    public AnnJakob Jakob;
 
     public Text Player1ScoreText, Player2ScoreText, PlayerTurnText;
     public GameObject MovePanel;
@@ -59,6 +61,7 @@ public class GameManager : MonoBehaviour
             OnePlayerMode = true;
         }
         AIPlayerLevel = PlayerPrefs.GetInt("AILevel");
+        Debug.Log("The AI Level is now " + AIPlayerLevel);
         StartCoroutine("WaitForLoad");
 
     }
@@ -110,7 +113,6 @@ public class GameManager : MonoBehaviour
         MovePanel.SetActive(false);
       // isShowingMovePanel = false;
     }
-    
     public void PutPawnOnBoard(Pawn pawn) {
         if (!pawn.OnBoard)
         {
@@ -210,7 +212,6 @@ public class GameManager : MonoBehaviour
             EndOfGame = true;
         }
     }
-
     void CleanUp()
     {
         player1sTurn = true;
@@ -239,7 +240,6 @@ public class GameManager : MonoBehaviour
 
 
     }
-
     public IEnumerator TakeTurn()
     {
     //    Debug.Log("Starting a turn");
@@ -260,23 +260,24 @@ public class GameManager : MonoBehaviour
                 }
                 if (AIPlayerLevel == 3)
                 {
-                    Minjimaru.TakeTurn();
+                    Quinten.TakeTurn();
                 }
 
             }
             if (ZeroPlayerMode)
             {
                 //Player1 AIs
-                Quinten.TakeTurn();
-
+                //     Quinten.TakeTurn();
+                //   Jakob.TakeTurn();
+                Quinten2.TakeTurn();
                 //Player2 AIs
                 Hubert.TakeTurn();
+              //  Quinten2.TakeTurn();
 
-                // Randy2.TakeTurn();
 
                 //   Randy.TakeTurn();
+                // Quinten.TakeTurn();
 
-                Quinten.TakeTurn();
                 //Quinten2.TakeTurn();
 
             }
@@ -343,7 +344,8 @@ public class GameManager : MonoBehaviour
 
         if (timesofPlay == timesplayed)
         {
-            logs(scorepl1, Quinten.SeeUnknownStates());
+            logs(scorepl2, Quinten2.SeeUnknownStates());
+
             //Debug.Log("of a hundred games");
             Debug.Log("Player 1 had: " +scorepl1);
             // Debug.Log("Player 2 had: " +scorepl2);
@@ -383,7 +385,7 @@ public class GameManager : MonoBehaviour
                     Quinten.GameOver(false);
 
                 }
-               /* if (Quinten2.IsPlayer1)
+                if (Quinten2.IsPlayer1)
                 {
 
                     Quinten2.GameOver(true);
@@ -396,7 +398,7 @@ public class GameManager : MonoBehaviour
                     Quinten2.GameOver(false);
 
                 }
-                */
+                
                 player1Won = true;
                 TurnDone = true;
             //    Debug.Log("And the grueling battle ended with the victory of Player 1." );

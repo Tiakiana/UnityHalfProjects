@@ -21,7 +21,7 @@ public class Board : MonoBehaviour
 
     void Start()
     {
-        // EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEROROR IN BOUND CHECK DENNE CLEAR TING NÅR DU SKAL ARBE IGEN
+        
         ClearLastMoves();
         for (int x = 0; x < 5; x++)
         {
@@ -970,7 +970,7 @@ public class Board : MonoBehaviour
     public int[,] ConvertBoardToANNInput()
     {
         int[,,] boardstate = ConvertToBoardState();
-        int[,] result = new int[7,5];
+        int[,] result = new int[5,5];
 
         for (int x = 0; x < 5; x++)
         {
@@ -982,7 +982,6 @@ public class Board : MonoBehaviour
                     //spiller 1 blå
                     result[x, y] = 2;
                 }
-
                 if (boardstate[x, y, 1] == 1 && boardstate[x, y, 2] == 3)
                 {
                     //spiller 1 rød
@@ -1011,8 +1010,8 @@ public class Board : MonoBehaviour
 
             }
         }
-        result[5, 0] = GameManager.GmInst.Player1Points;
-        result[6, 0] = GameManager.GmInst.Player2Points;
+     //   result[5, 0] = GameManager.GmInst.Player1Points;
+      //  result[6, 0] = GameManager.GmInst.Player2Points;
         return result;
        
 

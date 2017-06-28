@@ -9,6 +9,7 @@ public class QLearnP2 : MonoBehaviour
 {
     Dictionary<int, QNode> ListOfStates = new Dictionary<int, QNode>();
     List<Action> usedActions = new List<Action>();
+    public float DiscountFactor;
     //Unity Specifikt
     public float ExploratoryMoveChance = 10;
     public Pawn[] AIPawns = new Pawn[3];
@@ -87,7 +88,8 @@ public class QLearnP2 : MonoBehaviour
         public int Pawn;
         public int Move;
         public float Score;
-
+        public float TimesSelected;
+        public float Wins;
         public Action(int pawn, int move)
         {
             Pawn = pawn;
@@ -109,13 +111,20 @@ public class QLearnP2 : MonoBehaviour
 
     //public List<int> NumberOfActionsPrGame = new List<int>();
     public void GameOver(bool didIWin) {
-        
+    //    Debug.Log("Of these last hundred games I encountered this number of unknown states: " + UnknownStates);
+      //  UnknownStates = 0;
         if (didIWin)
         {
             //Chokolade til mig
             foreach (Action item in usedActions)
             {
-                item.Score += (1f/usedActions.Count);
+
+                item.Wins += 1;
+                item.TimesSelected += 1;
+                item.Score = item.Score * 1 * (0.01f + DiscountFactor * (item.Wins / item.TimesSelected) - item.Score);
+
+              //  item.Score +=  0.01f;
+
             }
         }
         else
@@ -123,7 +132,11 @@ public class QLearnP2 : MonoBehaviour
             //skridtprygl;
             foreach (Action item in usedActions)
             {
-                item.Score -= .001f;
+                item.TimesSelected += 1;
+
+                item.Score = item.Score * 1 * (-0.01f + DiscountFactor * (item.Wins / item.TimesSelected) - item.Score);
+              //  item.Score -= 0.01f;
+
             }
 
         }
@@ -137,65 +150,64 @@ public class QLearnP2 : MonoBehaviour
         }
         GameCount++;
     }
+    public int SeeUnknownStates()
+    {
+        int res = UnknownStates;
+        Debug.Log("I've encountered " + UnknownStates + " unknown States these past 100 games");
+        UnknownStates = 0;
+        return res;
+    }
+
+
     public int UnknownStates = 0;
     public void TakeTurn()
     {
-        int Boardstate = HashBoardState();
-        if (ListOfStates.ContainsKey(Boardstate))
+        if (gm.player1sTurn == IsPlayer1)
         {
-            // Kig dig om for at se hvad du så skal gøre
-          //  Debug.Log("I Know this state!");
-
-     //       Debug.Log("Best action here is:");
-
-            List<Action> SortedList = ListOfStates[Boardstate].Actions.OrderBy(o => o.Score).ToList();
-            SortedList.Reverse();
-         //   Debug.Log("Pawn:" + SortedList[0].Pawn + " Move: " + SortedList[0].Move + " With a score of: " + SortedList[0].Score);
-            if (Random.Range(1,101)< ExploratoryMoveChance)
+            int Boardstate = HashBoardState();
+            if (ListOfStates.ContainsKey(Boardstate))
             {
-                if (SortedList.Count>1)
+                List<Action> Sortedlist = ListOfStates[Boardstate].Actions.OrderBy(o => o.Score).ToList();
+                Sortedlist.Reverse();
+                if (Random.Range(1, 101) < ExploratoryMoveChance)
                 {
-                    MakeMove(SortedList[Random.Range(1, SortedList.Count)]);
+                    if (Sortedlist.Count > 1)
+                    {
+                        MakeMove(Sortedlist[Random.Range(1, Sortedlist.Count)]);
+                    }
+                    else
+                    {
+                        MakeMove(Sortedlist[0]);
+                    }
                 }
                 else
                 {
-                    MakeMove(SortedList[0]);
+                    MakeMove(Sortedlist[0]);
                 }
             }
+
+            // Hvis IKKE vi kender dette boardstate
             else
             {
-         
-                    MakeMove(SortedList[0]);
-            }
-        }
-
-        // Hvis IKKE vi kender dette boardstate
-        else
-        {
-            //   Debug.Log("I Dont know this state :(");
-            UnknownStates++;
-            if (UnknownStates>10000)
-            {
-                Debug.Log("Resetting unknownStates");
-                UnknownStates = 0;
-            }
-            QNode qn = new QNode(Boardstate);
-            for (int pawn = 0; pawn < 3; pawn++)
-            {
-                AIPawns[pawn].CheckForOptions();
-                for (int move = 0; move < 5; move++)
+                //   Debug.Log("I Dont know this state :(");
+                UnknownStates++;
+                QNode qn = new QNode(Boardstate);
+                for (int pawn = 0; pawn < 3; pawn++)
                 {
-                    if (AIPawns[pawn].Options[move])
+                    AIPawns[pawn].CheckForOptions();
+                    for (int move = 0; move < 5; move++)
                     {
-                        qn.Actions.Add(new Action(pawn,move));
+                        if (AIPawns[pawn].Options[move])
+                        {
+                            qn.Actions.Add(new Action(pawn, move));
+                        }
                     }
                 }
+                ListOfStates.Add(Boardstate, qn);
+                MakeMove(qn.Actions[Random.Range(0, qn.Actions.Count)]);
             }
-            ListOfStates.Add(Boardstate, qn);
-            MakeMove(qn.Actions[Random.Range(0,qn.Actions.Count)]);
+
         }
-
-
     }
 
 
@@ -209,7 +221,12 @@ public class QLearnP2 : MonoBehaviour
     //On Game End: Vandt jeg ikke? Så skal jeg have skridtprygl og straf
 
     public void MakeMove(Action action) {
+        if (!usedActions.Contains(action))
+        {
+
         usedActions.Add(action);
+        }
+
         AIPawns[action.Pawn].Move(Pawn.ConvertIntToDir(action.Move));
       //  Debug.Log("USed Actions So far: " + usedActions.Count); 
     }
@@ -239,7 +256,7 @@ public class QLearnP2 : MonoBehaviour
         if (Input.GetKeyUp("s"))
         {
             Debug.Log("Saving");
-            SaveListOfStates(ListOfStates);
+      //      SaveListOfStates(ListOfStates);
         }
 
         if (Input.GetKeyUp("n"))

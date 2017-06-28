@@ -202,11 +202,6 @@
         <para>The clip representing the playable supports initial local times greater than zero.</para>
       </summary>
     </member>
-    <member name="F:UnityEngine.Timeline.ClipCaps.Compounding">
-      <summary>
-        <para>The clip representing this playable supports clip compounds.</para>
-      </summary>
-    </member>
     <member name="F:UnityEngine.Timeline.ClipCaps.Extrapolation">
       <summary>
         <para>The clip representing this playable supports clip extrapolation.</para>
@@ -441,11 +436,6 @@
     <member name="P:UnityEngine.Timeline.PrefabControlPlayable.prefabInstance">
       <summary>
         <para>The instance of the prefab that has been generated for this playable.</para>
-      </summary>
-    </member>
-    <member name="T:UnityEngine.Timeline.TimeControlPlayable">
-      <summary>
-        <para>Playable that manages the forwarding of calls to an object implementing ITimeControl.</para>
       </summary>
     </member>
     <member name="T:UnityEngine.Timeline.TimelineAsset">

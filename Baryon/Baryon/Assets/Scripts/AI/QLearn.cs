@@ -18,7 +18,7 @@ public class QLearn : MonoBehaviour
     // save after x number of games;
     public int saveInterval = 100;
     int GameCount = 0;
-   // public bool Move;
+    // public bool Move;
     public bool IsPlayer1;
 
     // Use this for initialization
@@ -63,25 +63,20 @@ public class QLearn : MonoBehaviour
             }
         }
     }
-
-
     public class QNode
     {
         public int BoardState;
         public List<Action> Actions;
 
-        public QNode( int boardState)
+        public QNode(int boardState)
         {
             BoardState = boardState;
             Actions = new List<Action>();
         }
         public QNode() { }
-      
+
 
     }
- 
-
-
     public class Action
     {
         public int Pawn;
@@ -94,7 +89,8 @@ public class QLearn : MonoBehaviour
             Move = move;
             Score = 0.5f;
         }
-        public Action() {
+        public Action()
+        {
 
         }
     }
@@ -108,15 +104,17 @@ public class QLearn : MonoBehaviour
      * */
 
     //  public List<int> NumberOfActionsPrGame = new List<int>();
-    public int SeeUnknownStates() {
+    public int SeeUnknownStates()
+    {
         int res = UnknownStates;
         Debug.Log("I've encountered " + UnknownStates + " unknown States these past 100 games");
         UnknownStates = 0;
         return res;
     }
 
-    public void GameOver(bool didIWin) {
-        
+    public void GameOver(bool didIWin)
+    {
+
         if (didIWin)
         {
             //Chokolade til mig
@@ -132,9 +130,7 @@ public class QLearn : MonoBehaviour
             {
                 item.Score -= .01f;
             }
-
         }
-        //NumberOfActionsPrGame.Add(usedActions.Count);
         usedActions.Clear();
         if (GameCount == saveInterval)
         {
@@ -144,58 +140,15 @@ public class QLearn : MonoBehaviour
         }
         GameCount++;
     }
+
     public int UnknownStates = 0;
 
     public Action MentorMove()
     {
         int Boardstate = HashBoardState();
-        if (!ListOfStates.ContainsKey(Boardstate)) 
+        if (!ListOfStates.ContainsKey(Boardstate))
         {
-            return null;
-        }
-
-        List<Action> SortedList = ListOfStates[Boardstate].Actions.OrderBy(o => o.Score).ToList();
-        SortedList.Reverse();
-        return SortedList[0];
-    }
-
-    public void TakeTurn()
-    {
-        int Boardstate = HashBoardState();
-        if (ListOfStates.ContainsKey(Boardstate))
-        {
-            // Kig dig om for at se hvad du så skal gøre
-          //  Debug.Log("I Know this state!");
-
-     //       Debug.Log("Best action here is:");
-
-            List<Action> SortedList = ListOfStates[Boardstate].Actions.OrderBy(o => o.Score).ToList();
-            SortedList.Reverse();
-         //   Debug.Log("Pawn:" + SortedList[0].Pawn + " Move: " + SortedList[0].Move + " With a score of: " + SortedList[0].Score);
-            if (Random.Range(1,101)< ExploratoryMoveChance)
-            {
-                if (SortedList.Count>1)
-                {
-                    MakeMove(SortedList[Random.Range(1, SortedList.Count)]);
-                }
-                else
-                {
-                    MakeMove(SortedList[0]);
-                }
-            }
-            else
-            {
-         
-                    MakeMove(SortedList[0]);
-            }
-        }
-
-        // Hvis IKKE vi kender dette boardstate
-        else
-        {
-            //   Debug.Log("I Dont know this state :(");
             UnknownStates++;
-            
             QNode qn = new QNode(Boardstate);
             for (int pawn = 0; pawn < 3; pawn++)
             {
@@ -204,14 +157,66 @@ public class QLearn : MonoBehaviour
                 {
                     if (AIPawns[pawn].Options[move])
                     {
-                        qn.Actions.Add(new Action(pawn,move));
+                        qn.Actions.Add(new Action(pawn, move));
                     }
                 }
             }
             ListOfStates.Add(Boardstate, qn);
-            MakeMove(qn.Actions[Random.Range(0,qn.Actions.Count)]);
+            //   MakeMove(qn.Actions[Random.Range(0, qn.Actions.Count)]);
+
         }
 
+        List<Action> SortedList = ListOfStates[Boardstate].Actions.OrderBy(o => o.Score).ToList();
+        SortedList.Reverse();
+        usedActions.Add(SortedList[0]);
+        return SortedList[0];
+    }
+
+    public void TakeTurn()
+    {
+        if (gm.player1sTurn == IsPlayer1)
+        {
+            int Boardstate = HashBoardState();
+            if (ListOfStates.ContainsKey(Boardstate))
+            {
+                List<Action> SortedList = ListOfStates[Boardstate].Actions.OrderBy(o => o.Score).ToList();
+                SortedList.Reverse();
+                if (Random.Range(1, 101) < ExploratoryMoveChance)
+                {
+                    if (SortedList.Count > 1)
+                    {
+                        MakeMove(SortedList[Random.Range(1, SortedList.Count)]);
+                    }
+                    else
+                    {
+                        MakeMove(SortedList[0]);
+                    }
+                }
+                else
+                {
+                    MakeMove(SortedList[0]);
+                }
+            }
+            // Hvis IKKE vi kender dette boardstate
+            else
+            {
+                UnknownStates++;
+                QNode qn = new QNode(Boardstate);
+                for (int pawn = 0; pawn < 3; pawn++)
+                {
+                    AIPawns[pawn].CheckForOptions();
+                    for (int move = 0; move < 5; move++)
+                    {
+                        if (AIPawns[pawn].Options[move])
+                        {
+                            qn.Actions.Add(new Action(pawn, move));
+                        }
+                    }
+                }
+                ListOfStates.Add(Boardstate, qn);
+                MakeMove(qn.Actions[Random.Range(0, qn.Actions.Count)]);
+            }
+        }
 
     }
 
@@ -225,10 +230,11 @@ public class QLearn : MonoBehaviour
     // On Game End: Vandt jeg? Så skal jeg have kage og bonusser
     //On Game End: Vandt jeg ikke? Så skal jeg have skridtprygl og straf
 
-    public void MakeMove(Action action) {
+    public void MakeMove(Action action)
+    {
         usedActions.Add(action);
         AIPawns[action.Pawn].Move(Pawn.ConvertIntToDir(action.Move));
-      //  Debug.Log("USed Actions So far: " + usedActions.Count); 
+        //  Debug.Log("USed Actions So far: " + usedActions.Count); 
     }
 
     public int HashBoardState()
@@ -255,7 +261,7 @@ public class QLearn : MonoBehaviour
     {
         if (Input.GetKeyUp("s"))
         {
-            SaveListOfStates(ListOfStates);
+        //    SaveListOfStates(ListOfStates);
         }
 
         if (Input.GetKeyUp("n"))
@@ -270,7 +276,10 @@ public class QLearn : MonoBehaviour
 
             }
         }
-
+        if (Input.GetKeyUp("q"))
+        {
+            Debug.Log(HashBoardState());
+        }
 
     }
     //Save QNode XML fil

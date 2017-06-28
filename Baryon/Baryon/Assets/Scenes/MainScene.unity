@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6773ee61d631b3143917c74e5a9d86aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ExploratoryMoveChance: 1
+  ExploratoryMoveChance: 3
   AIPawns:
   - {fileID: 0}
   - {fileID: 0}
@@ -205,7 +205,7 @@ MonoBehaviour:
   otherPlayerNumber: 2
   gm: {fileID: 904150179}
   saveInterval: 1000
-  IsPlayer1: 1
+  IsPlayer1: 0
   UnknownStates: 0
 --- !u!1 &77166527
 GameObject:
@@ -302,7 +302,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180.00002}
   m_AnchorMin: {x: 0.5, y: 0.14249352}
   m_AnchorMax: {x: 0.5, y: 0.14249352}
-  m_AnchoredPosition: {x: -0.6, y: -16.1}
+  m_AnchoredPosition: {x: -0.6, y: -16.100002}
   m_SizeDelta: {x: 68.8, y: 59.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &122624576
@@ -651,7 +651,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  IsPlayer1: 1
+  IsPlayer1: 0
   gm: {fileID: 904150179}
 --- !u!1 &740934528
 GameObject:
@@ -790,7 +790,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90.00001}
   m_AnchorMin: {x: 0.10970732, y: 0.526}
   m_AnchorMax: {x: 0.10970732, y: 0.526}
-  m_AnchoredPosition: {x: -15.7, y: -2.6}
+  m_AnchoredPosition: {x: -15.699997, y: -2.6}
   m_SizeDelta: {x: 68.8, y: 59.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &853254217
@@ -969,7 +969,7 @@ MonoBehaviour:
   Player2Points: 0
   TwoPlayerMode: 0
   ZeroPlayerMode: 0
-  OnePlayerMode: 1
+  OnePlayerMode: 0
   GameMasterMode: 0
   AIPlayerLevel: 2
   Randy: {fileID: 633717621}
@@ -979,6 +979,7 @@ MonoBehaviour:
   Minjimaru: {fileID: 26383652}
   Quinten: {fileID: 67003389}
   Quinten2: {fileID: 1165829913}
+  Jakob: {fileID: 1252764701}
   Player1ScoreText: {fileID: 2120733004}
   Player2ScoreText: {fileID: 1488828899}
   PlayerTurnText: {fileID: 438523925}
@@ -1119,7 +1120,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.90300006}
   m_AnchorMax: {x: 0.5, y: 0.90300006}
-  m_AnchoredPosition: {x: -0.6, y: 13.8}
+  m_AnchoredPosition: {x: -0.6, y: 13.800003}
   m_SizeDelta: {x: 68.8, y: 59.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1126144574
@@ -1258,7 +1259,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf01f22b4e804c4488a2364b02cc6781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ExploratoryMoveChance: 1
+  DiscountFactor: 0.75
+  ExploratoryMoveChance: 3
   AIPawns:
   - {fileID: 0}
   - {fileID: 0}
@@ -1267,7 +1269,7 @@ MonoBehaviour:
   otherPlayerNumber: 1
   gm: {fileID: 904150179}
   saveInterval: 1000
-  IsPlayer1: 0
+  IsPlayer1: 1
   UnknownStates: 0
 --- !u!1 &1244812323
 GameObject:
@@ -1302,9 +1304,106 @@ Transform:
   - {fileID: 1165829912}
   - {fileID: 1370973822}
   - {fileID: 1582504665}
+  - {fileID: 1252764700}
+  - {fileID: 1308404297}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1252764699
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1252764700}
+  - component: {fileID: 1252764701}
+  m_Layer: 0
+  m_Name: JakobANN
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1252764700
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1252764699}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1244812324}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1252764701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1252764699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aba494a9197e221449d57e54d6419009, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AIPawns:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  NumberOfHidden: 15
+  IsPlayer1: 0
+  HiddenWeigthsAdjustments: []
+  OutputWeightsAdjustments: []
+  Mentor: {fileID: 67003389}
+  gm: {fileID: 904150179}
+  MentorMove: 0
+--- !u!1 &1308404296
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1308404297}
+  - component: {fileID: 1308404298}
+  m_Layer: 0
+  m_Name: EmilANN
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1308404297
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1308404296}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1244812324}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1308404298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1308404296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26c346da19600344aa8476742b4b8d3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Mentor: {fileID: 67003389}
+  mentorMove: 0
+  LearningRate: 0.1
+  ThreshAdjust: 0
 --- !u!1 &1370973821
 GameObject:
   m_ObjectHideFlags: 0
@@ -1320,7 +1419,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1370973822
 Transform:
   m_ObjectHideFlags: 0
@@ -1346,8 +1445,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Mentor: {fileID: 67003389}
+  mentorMove: 0
   ThreshAdjust: 0.5
-  BiasAdjust: 0.1
+  BiasAdjust: 0.01
   LearningRate: 0.1
 --- !u!1 &1443450206
 GameObject:
@@ -1485,7 +1585,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1582504665
 Transform:
   m_ObjectHideFlags: 0

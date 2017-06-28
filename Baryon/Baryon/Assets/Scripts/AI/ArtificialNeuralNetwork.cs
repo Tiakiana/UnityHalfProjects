@@ -7,7 +7,7 @@ using UnityEngine;
 public class ArtificialNeuralNetwork : MonoBehaviour
 {
     public QLearn Mentor;
-    private int mentorMove = 0;
+    public int mentorMove = 0;
     public Layer Input, Hidden, Output;
 
     public double ThreshAdjust, BiasAdjust, LearningRate;
@@ -21,7 +21,7 @@ public class ArtificialNeuralNetwork : MonoBehaviour
         Output = new Layer();
 
         List<Neuron> inputneurons = new List<Neuron>();
-        for (int i = 0; i < 27; i++)
+        for (int i = 0; i < 75; i++)
         {
             Neuron n = new Neuron();
 
@@ -33,10 +33,10 @@ public class ArtificialNeuralNetwork : MonoBehaviour
         Input.Neurons.AddRange(inputneurons);
 
         List<Neuron> hiddenNeurons = new List<Neuron>();
-        for (int i = 0; i < 19; i++)
+        for (int i = 0; i < 30; i++)
         {
             Neuron n = new Neuron();
-            for (int x = 0; x < 27; x++)
+            for (int x = 0; x < inputneurons.Count; x++)
             {
                 n.Weights.Add(UnityEngine.Random.value);
 
@@ -51,7 +51,7 @@ public class ArtificialNeuralNetwork : MonoBehaviour
         for (int i = 0; i < 15; i++)
         {
             Neuron n = new Neuron();
-            for (int x = 0; x < 19; x++)
+            for (int x = 0; x < hiddenNeurons.Count; x++)
             {
                 n.Weights.Add(UnityEngine.Random.value);
 
@@ -101,17 +101,113 @@ public class ArtificialNeuralNetwork : MonoBehaviour
         int ix = 0;
         
 
+        // Take Boardstate and convert it to 3 bit for each square
         for (int x = 0; x < 5; x++)
         {
             for (int y = 0; y < 5; y++)
             {
-                
-                Input.Neurons[ix].Inputs.Add(boardState[x, y]);
-                ix++;
+                switch (boardState[x,y])
+                {
+                    case 1:
+                        for (int z = 0; z < 3; z++)
+                        {
+                            Input.Neurons[ix + z].Inputs.Add(1);
+                        }
+                        break;
+                    case 2:
+                        for (int z = 0; z < 3; z++)
+                        {
+                            if (z == 0 || z == 1)
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(0);
+                            }
+                            else
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(1);
+
+                            }
+                        }
+                        break;
+                    case 3:
+                        for (int z = 0; z < 3; z++)
+                        {
+                            if (z == 0 || z == 2)
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(0);
+                            }
+                            else
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(1);
+
+                            }
+                        }
+                        break;
+                    case 4:
+                        for (int z = 0; z < 3; z++)
+                        {
+                            if (z == 1 || z == 2)
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(0);
+                            }
+                            else
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(1);
+
+                            }
+                            
+                        }
+                        break;
+                    case 5:
+                        for (int z = 0; z < 3; z++)
+                        {
+                            if (z == 1)
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(0);
+                            }
+                            else
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(1);
+
+                            }
+                        }
+                        break;
+                    case 6:
+                        for (int z = 0; z < 3; z++)
+                        {
+                            if (z == 2)
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(0);
+                            }
+                            else
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(1);
+
+                            }
+                        }
+                        break;
+                    case 7:
+                        for (int z = 0; z < 3; z++)
+                        {
+                            if (z == 0)
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(0);
+                            }
+                            else
+                            {
+                                Input.Neurons[ix + z].Inputs.Add(1);
+
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                //Input.Neurons[ix].Inputs.Add(boardState[x, y]);
+                ix = ix + 3;
             }
         }
-        Input.Neurons[25].Inputs.Add((double)GameManager.GmInst.Player1Points);
-        Input.Neurons[26].Inputs.Add((double)GameManager.GmInst.Player2Points);
+      //  Input.Neurons[25].Inputs.Add((double)GameManager.GmInst.Player1Points);
+    //    Input.Neurons[26].Inputs.Add((double)GameManager.GmInst.Player2Points);
         int i = 0;
         foreach (Neuron item in Input.Neurons)
         {
@@ -141,8 +237,8 @@ public class ArtificialNeuralNetwork : MonoBehaviour
 
             for (int inputneuron = 0; inputneuron < Input.Neurons.Count; inputneuron++)
             {
-             
-                hidden.Inputs.Add(Input.Neurons[inputneuron].Output);
+           //     Debug.Log("This is my input: " + Input.Neurons[inputneuron].Inputs[0]);
+                hidden.Inputs.Add(Input.Neurons[inputneuron].Inputs[0]);
             }
 
         
@@ -182,15 +278,18 @@ public class ArtificialNeuralNetwork : MonoBehaviour
 
     public void CalculateError()
     {
+
+
         // Skal gøre det der står på æsken.
         //Output.Neurons[mentorMove].Error = 1 -Output.Neurons[mentorMove].Output);
         //globalError = f’(output) * (desiredOutput - actualOutput)
-        double outputErr = 0;
-       // Output.Neurons[mentorMove].Error = sigmoid.derivative(Output.Neurons[mentorMove].Output) * (1 - Output.Neurons[mentorMove].Output);
-        Output.Neurons[mentorMove].Error = (1 - Output.Neurons[mentorMove].Output);
+        //  double outputErr = 0;
+        Output.Neurons[mentorMove].Error = 1 - Output.Neurons[mentorMove].Output;
+        //  Output.Neurons[mentorMove].Error = sigmoid.derivative(Output.Neurons[mentorMove].Output) * (1 - Output.Neurons[mentorMove].Output);
+        //Output.Neurons[mentorMove].Error = (1 - Output.Neurons[mentorMove].Output);
 
-        outputErr += sigmoid.derivative(Output.Neurons[mentorMove].Output) * (1 - Output.Neurons[mentorMove].Output);
-        Debug.Log("This here is my error " +outputErr);
+        //  outputErr += sigmoid.derivative(Output.Neurons[mentorMove].Output) * (1 - Output.Neurons[mentorMove].Output);
+
         for (int i = 0; i < 15; i++)
         {
             if (i == mentorMove)
@@ -199,20 +298,32 @@ public class ArtificialNeuralNetwork : MonoBehaviour
             }
             else
             {
-                Output.Neurons[i].Error = sigmoid.derivative(Output.Neurons[i].Output) * (Output.Neurons[i].Output-0);
-                outputErr += Output.Neurons[i].Error;
+                //      Output.Neurons[i].Error = sigmoid.derivative(Output.Neurons[i].Output) * (Output.Neurons[i].Output-0);
+                Output.Neurons[i].Error = 0 - Output.Neurons[i].Output;
+                Debug.Log("output error for unused outputs " + Output.Neurons[i].Error);
+            //   outputErr += Output.Neurons[i].Error;
             }
 
+        }
+
+        for (int hidden = 0; hidden < Hidden.Neurons.Count; hidden++)
+        {
+            Hidden.Neurons[hidden].Error = 0;
+
+            for (int output = 0; output < Output.Neurons.Count; output++)
+            {
+                Hidden.Neurons[hidden].Error += Output.Neurons[output].Weights[hidden] * Output.Neurons[output].Error * sigmoid.derivative(Hidden.Neurons[hidden].Output);
+            }
         }
         // evt tag gennemsnittet af Erroren.
 
         // Calculate error på hiddenlayer
-        foreach (Neuron item in Hidden.Neurons)
-        {
+        //foreach (Neuron item in Hidden.Neurons)
+       // {
             //hiddenNeuron1.error = sigmoid.derivative(hiddenNeuron1.output) * outputNeuron.error * outputNeuron.weights[0];
 
-            item.Error = sigmoid.derivative(item.Output) * outputErr * Output.GetSummedWeights();
-        }
+        //    item.Error = sigmoid.derivative(item.Output) * outputErr * Output.GetSummedWeights();
+//        }
 
 
         //outputNeuron.error = sigmoid.derivative(outputNeuron.output) * (results[i] - outputNeuron.output);
@@ -224,33 +335,44 @@ public class ArtificialNeuralNetwork : MonoBehaviour
     public void AdjustWeights()
     {
 
-
         // Skal gøre det der står på æsken.
 
         foreach (Neuron item in Output.Neurons)
         {
+           // int currentOutputNeuron = 0;
+            double deltaOutputSum = item.Output * (1 - item.Output) * item.Error;
+            item.DeltaOutputSum = deltaOutputSum;
             /*
              *                 weights[0] += error * inputs[0];
                 weights[1] += error * inputs[1];
                 biasWeight += error;
              * 
              * */
+            List<double> ChangeOfMyWeights = new List<double>();
+
             for (int i = 0; i < item.Weights.Count; i++)
             {
-                item.Weights[i] = item.Error * item.Inputs[i];
-
+                // I fald vi er nødt til at sætte ændringerne til sidst er der her lavet både immediate og andet
+               // ChangeOfMyWeights.Add(deltaOutputSum * Hidden.Neurons[i].Output);
+                item.Weights[i] += deltaOutputSum * Hidden.Neurons[i].Output;
             }
-            item.BiasWeight += item.Error;
+            // item.BiasWeight += item.Error;
+
+
+           // List<double> deltaHiddenSums = new List<double>();
+        
+
+         
         }
+
+
 
         foreach (Neuron item in Hidden.Neurons)
         {
             for (int i = 0; i < item.Weights.Count; i++)
             {
-                item.Weights[i] = item.Error * item.Inputs[i];
-
+                item.Weights[i] =  LearningRate    * Output.Neurons[mentorMove].DeltaOutputSum; //item.Error * item.Output 
             }
-            item.BiasWeight += item.Error;
         }
 
 
@@ -260,39 +382,35 @@ public class ArtificialNeuralNetwork : MonoBehaviour
     public void Epoch()
     {
 
-        // if (Mentor.MentorMove() != null)
-        // {
-        //   GetMentorMove();
+         if (Mentor.MentorMove() != null)
+         {
+           GetMentorMove();
         //Er den rigtige, men for testing purposes laver vi lige noget andet.
-
         TakeInput();
+        Debug.Log("input is: " + Input.GetSummedWeights());
         SendToHiddenLayer();
         SendToOutputLayer();
         CalculateError();
-
-        foreach (Neuron neuron in Output.Neurons)
-        {
-        //    Debug.Log(neuron.Error);
-        }
-
         AdjustWeights();
 
 
-        //   }
-        // else
-        // {
+           }
+         else
+         {
 
-        // Debug.Log("Mentor knew shit. Cannot train");
-        //}
+         Debug.Log("Mentor knew shit. Cannot train");
+        }
 
 
         // Beregn Error og justér
-
+        Debug.Log("This is the neuron that should be 1: and it's error is " + Output.Neurons[mentorMove].Error);
     }
 
     IEnumerator WaitForEverAThing()
     {
-        Debug.Log("Loading ANN");
+   //     Debug.Log("Loading ANN");
+ //       Debug.Log("MentorMove is " + mentorMove);
+        
         yield return new WaitForSeconds(2);
         Train(1);
     }
@@ -302,10 +420,11 @@ public class ArtificialNeuralNetwork : MonoBehaviour
         for (int i = 0; i < epochs; i++)
         {
             Epoch();
-            foreach (Neuron item in Output.Neurons)
+            if (i == 4)
             {
-            //    Debug.Log(item.Error);
+                Debug.Log("Try now");
             }
+
         }
     }
 
@@ -313,6 +432,13 @@ public class ArtificialNeuralNetwork : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (UnityEngine.Input.GetKeyUp("t"))
+        {
+            Debug.Log("Input Summed weights: " + Input.GetSummedWeights() );
+            Debug.Log("Hidden Summed weights: " + Hidden.GetSummedWeights());
+            Debug.Log("Hidden Summed weights: " + Output.GetSummedWeights());
+        }
+
         if (UnityEngine.Input.GetKeyUp("i"))
         {
             Train(1);
@@ -354,9 +480,19 @@ public class ArtificialNeuralNetwork : MonoBehaviour
         public List<double> Inputs = new List<double>();
         public List<double> Weights = new List<double>();
         public double BiasWeight;
-        public double Error;
         public double Threshold;
+        public double DeltaOutputSum;
+        public double Error;
 
+
+        public double GetSummedInput() {
+            double res = 0;
+            foreach (double item in Inputs)
+            {
+                res += item;
+            }
+            return sigmoid.output( res);
+        }
 
         public double Output
         {
@@ -367,7 +503,7 @@ public class ArtificialNeuralNetwork : MonoBehaviour
                 {
                     res += Inputs[i]*Weights[i];
                 }
-                return res + BiasWeight;
+                return sigmoid.output(res) ;
             }
         }
     }
