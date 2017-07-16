@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<PlayerInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <playerMoney>497</playerMoney>
+  <playerGoods>
+    <Good>
+      <Price>500</Price>
+      <Name>Furs, Rare</Name>
+    </Good>
+  </playerGoods>
+</PlayerInfo>
