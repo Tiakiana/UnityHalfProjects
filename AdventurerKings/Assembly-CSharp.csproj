@@ -46,7 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\GameController.cs" />
+     <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\Good.cs" />
      <Compile Include="Assets\Scripts\MapCreator.cs" />
      <Compile Include="Assets\Scripts\Market.cs" />
@@ -77,7 +77,7 @@
  <HintPath>E:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
  </Reference>
  <Reference Include="Independentsoft.Office.Odf">
- <HintPath>E:/Users/Jakob/UnityProjects/AdventurerKings/Assets/Resources/Independentsoft.Office.Odf.dll</HintPath>
+ <HintPath>E:/Repositories/UnityHalfProjects/AdventurerKings/Assets/Resources/Independentsoft.Office.Odf.dll</HintPath>
  </Reference>
  <Reference Include="Mono.Cecil">
  <HintPath>E:/Program Files/Unity/Editor/Data/Managed/Mono.Cecil.dll</HintPath>
