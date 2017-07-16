@@ -7,6 +7,7 @@ public class Stomp2 : MonoBehaviour {
     public GameObject Pickup;
     public bool isChild = true;
     public float spin;
+    public string ActionKey;
     AudioSource ausource;
     // Use this for initialization
     void Start()
@@ -21,7 +22,7 @@ public class Stomp2 : MonoBehaviour {
     {
 
 
-        if (Input.GetKeyDown("h"))
+        if (Input.GetKeyDown(ActionKey))
         {
          //   ausource.Play();
             if (isChild)
